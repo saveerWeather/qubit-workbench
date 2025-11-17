@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qubit Workbench</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .panel {
+            flex: 1;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+            max-width: 100%;
+        }
+
+        .panel h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.75rem;
+            max-width: 100%;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            max-width: 100%;
+        }
+
+        .section-content {
+            min-height: 60px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            padding: 1rem;
+        }
+
+        #bloch-sphere-panel {
+            flex: 1.5;
+        }
+
+        #bloch-sphere-canvas {
+            flex: 1;
+            min-height: 400px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .panel {
+                min-height: 300px;
+            }
+
+            #bloch-sphere-canvas {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Qubit Workbench</h1>
+    </header>
+
+    <main>
+        <!-- Left Panel: Controls -->
+        <section class="panel" id="controls-panel">
+            <h2>Controls</h2>
+            
+            <div class="section">
+                <h3 class="section-heading">Drive Parameters</h3>
+                <div class="section-content"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Noise & Decoherence</h3>
+                <div class="section-content"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Simulation Controls</h3>
+                <div class="section-content"></div>
+            </div>
+        </section>
+
+        <!-- Center Panel: Bloch Sphere -->
+        <section class="panel" id="bloch-sphere-panel">
+            <h2>Bloch Sphere</h2>
+            <div id="bloch-sphere-canvas">
+                <span>Bloch Sphere Canvas Area</span>
+            </div>
+        </section>
+
+        <!-- Right Panel: Details -->
+        <section class="panel" id="details-panel">
+            <h2>Details</h2>
+            
+            <div class="section">
+                <h3 class="section-heading">State Info</h3>
+                <div class="section-content"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Hamiltonian Info</h3>
+                <div class="section-content"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Unitary Info</h3>
+                <div class="section-content"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Future JavaScript will be added here
+    </script>
+</body>
+</html>
