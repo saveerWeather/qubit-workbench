@@ -110,7 +110,7 @@
             flex: 1.5;
         }
 
-        #bloch-sphere-canvas {
+        .bloch-sphere-canvas {
             flex: 1;
             min-height: 400px;
             background-color: #fafafa;
@@ -132,7 +132,7 @@
                 min-height: 300px;
             }
 
-            #bloch-sphere-canvas {
+            .bloch-sphere-canvas {
                 min-height: 300px;
             }
         }
@@ -160,14 +160,34 @@
 
             <div class="section">
                 <h3 class="section-heading">Simulation Controls</h3>
-                <div class="section-content"></div>
+                <div class="section-content">
+                    <label>Qubit 0 View Angle (phi): 
+                        <input type="range" id="cam-phi-0" min="0" max="360" value="30">
+                    </label>
+                    <br><br>
+                    <label>Qubit 0 View Angle (theta): 
+                        <input type="range" id="cam-theta-0" min="0" max="180" value="90">
+                    </label>
+                    <br><br>
+                    <label>Qubit 1 View Angle (phi): 
+                        <input type="range" id="cam-phi-1" min="0" max="360" value="30">
+                    </label>
+                    <br><br>
+                    <label>Qubit 1 View Angle (theta): 
+                        <input type="range" id="cam-theta-1" min="0" max="180" value="90">
+                    </label>
+                </div>
             </div>
         </section>
 
         <!-- Center Panel: Bloch Sphere -->
         <section class="panel" id="bloch-sphere-panel">
-            <h2>Bloch Sphere</h2>
-            <div id="bloch-sphere-canvas">
+            <h2>Bloch Sphere (Qubit 0)</h2>
+            <div class="bloch-sphere-canvas" id="bloch-sphere-0">
+                <span>Bloch Sphere Canvas Area</span>
+            </div>
+            <h2>Bloch Sphere (Qubit 1)</h2>
+            <div class="bloch-sphere-canvas" id="bloch-sphere-1">
                 <span>Bloch Sphere Canvas Area</span>
             </div>
         </section>
@@ -198,8 +218,8 @@
         <h3>By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</h3>
     </footer>
 
-    <script>
-        // Future JavaScript will be added here
+    <script src="blochscript.js" type="module">
+        //Seperate file blochscript.js
     </script>
 </body>
 </html>
