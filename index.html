@@ -122,6 +122,69 @@
             color: #999;
         }
 
+/* ↓↓↓ paste below this line ↓↓↓ */
+
+/* Gate matrix UI in right panel */
+#unitary-matrix-section {
+    margin-top: auto;
+}
+
+#gate-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#gate-buttons button {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid #3498db;
+    background-color: #ffffff;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#gate-buttons button:hover {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+#gate-buttons button.selected {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.matrix-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.matrix-cell {
+    width: 100%;
+    padding: 0.3rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.matrix-cell:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 1px rgba(52, 152, 219, 0.2);
+}
+
+        
         /* Mobile responsive */
         @media (max-width: 768px) {
             main {
@@ -210,6 +273,22 @@
                 <h3 class="section-heading">Unitary Info</h3>
                 <div class="section-content"></div>
             </div>
+            <!-- ↓↓↓ paste below this line ↓↓↓ -->
+
+<div class="section" id="unitary-matrix-section">
+    <h3 class="section-heading">Gate Matrix</h3>
+    <div class="section-content">
+        <div id="gate-buttons">
+            <button id="gate-cnot" type="button">CNOT</button>
+            <button id="gate-cz" type="button">CZ</button>
+        </div>
+        <div class="matrix-title">Custom</div>
+        <div id="custom-matrix" class="matrix-grid">
+            <!-- cells created by JavaScript -->
+        </div>
+    </div>
+</div>
+
         </section>
 
     </main>
