@@ -183,9 +183,70 @@ function createBlochSphere(containerId, phiSliderId, thetaSliderId) {
         camera.updateProjectionMatrix();
     });
 }
+// ↓↓↓ paste below this line ↓↓↓
+
+function initCustomMatrix() {
+    const matrixContainer = document.getElementById("custom-matrix");
+    const btnCnot = document.getElementById("gate-cnot");
+    const btnCz = document.getElementById("gate-cz");
+
+    if (!matrixContainer || !btnCnot || !btnCz) return;
+
+    const size = 4;
+    const inputs = [];
+    let selectedGate = null;
+
+    // Build 4x4 grid
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.maxLength = 1;
+            input.classList.add("matrix-cell");
+            input.value = "0";
+
+            input.addEventListener("input", () => {
+                clearSelection();
+            });
+
+            matrixContainer.appendChild(input);
+            inputs.push(input);
+        }
+    }
+
+    function clearSelection() {
+        selectedGate = null;
+        btnCnot.classList.remove("selected");
+        btnCz.classList.remove("selected");
+    }
+
+    function setMatrix(values) {
+        for (let i = 0; i < 16; i++) {
+            inputs[i].value = values[i];
+        }
+    }
+
+    // CNOT button: fill all 1s
+    btnCnot.addEventListener("click", () => {
+        setMatrix(new Array(16).fill("1"));
+        selectedGate = "CNOT";
+        btnCnot.classList.add("selected");
+        btnCz.classList.remove("selected");
+    });
+
+    // CZ button: fill all 0s
+    btnCz.addEventListener("click", () => {
+        setMatrix(new Array(16).fill("0"));
+        selectedGate = "CZ";
+        btnCz.classList.add("selected");
+        btnCnot.classList.remove("selected");
+    });
+}
 
 // ----------------------------------------------------
 // Create the two Bloch spheres
 // ----------------------------------------------------
 createBlochSphere("bloch-sphere-0", "cam-phi-0", "cam-theta-0");
 createBlochSphere("bloch-sphere-1", "cam-phi-1", "cam-theta-1");
+// ↓↓↓ paste below this line ↓↓↓
+initCustomMatrix();
