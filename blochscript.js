@@ -226,21 +226,36 @@ function initCustomMatrix() {
         }
     }
 
-    // CNOT button: fill all 1s
-    btnCnot.addEventListener("click", () => {
-        setMatrix(new Array(16).fill("1"));
-        selectedGate = "CNOT";
-        btnCnot.classList.add("selected");
-        btnCz.classList.remove("selected");
-    });
+    // CNOT button: set to standard 2-qubit CNOT (control qubit 1, target qubit 2)
+// Basis order: |00>, |01>, |10>, |11>
+btnCnot.addEventListener("click", () => {
+    const cnotValues = [
+        "1", "0", "0", "0",
+        "0", "1", "0", "0",
+        "0", "0", "0", "1",
+        "0", "0", "1", "0"
+    ];
+    setMatrix(cnotValues);
+    selectedGate = "CNOT";
+    btnCnot.classList.add("selected");
+    btnCz.classList.remove("selected");
+});
 
-    // CZ button: fill all 0s
-    btnCz.addEventListener("click", () => {
-        setMatrix(new Array(16).fill("0"));
-        selectedGate = "CZ";
-        btnCz.classList.add("selected");
-        btnCnot.classList.remove("selected");
-    });
+   // CZ button: set to controlled-Z matrix
+// Basis: |00>, |01>, |10>, |11>
+btnCz.addEventListener("click", () => {
+    const czValues = [
+        "1", "0", "0", "0",
+        "0", "1", "0", "0",
+        "0", "0", "1", "0",
+        "0", "0", "0", "-1"
+    ];
+    setMatrix(czValues);
+    selectedGate = "CZ";
+    btnCz.classList.add("selected");
+    btnCnot.classList.remove("selected");
+});
+
 }
 
 // ----------------------------------------------------
