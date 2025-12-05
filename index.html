@@ -296,7 +296,39 @@
 
             <div class="section">
                 <h3 class="section-heading">Noise & Decoherence</h3>
-                <div class="section-content"></div>
+                <div class="section-content" id="noise-params">
+
+    <label>
+        Relaxation Time T<sub>1</sub> (μs):
+        <input type="number" id="noise-T1" step="0.01" placeholder="e.g. 25">
+    </label>
+    <br><br>
+
+    <label>
+        Dephasing Time T<sub>2</sub> (μs):
+        <input type="number" id="noise-T2" step="0.01" placeholder="e.g. 18">
+    </label>
+    <br><br>
+
+    <label>
+        Depolarizing Probability p:
+        <input type="number" id="noise-depol" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+    <br><br>
+
+    <label>
+        Readout Error P(0 | 1):
+        <input type="number" id="noise-ro-01" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+    <br><br>
+
+    <label>
+        Readout Error P(1 | 0):
+        <input type="number" id="noise-ro-10" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+
+</div>
+
             </div>
 
             <div class="section">
