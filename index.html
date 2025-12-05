@@ -197,6 +197,50 @@
                 min-height: 300px;
             }
         }
+
+/* ==== Probability Bars Styling ==== */
+#probability-bars {
+    width: 100%;
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#prob-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+#prob-bars-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    width: 80%;
+}
+
+.prob-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.prob-bar {
+    width: 30px;
+    height: 0px; /* default: zero prob */
+    background-color: #3498db;
+    border-radius: 4px;
+    transition: height 0.3s ease;
+}
+
+.prob-label {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+}
+
+        
     </style>
 </head>
 <body>
