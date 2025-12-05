@@ -255,7 +255,43 @@
             
             <div class="section">
                 <h3 class="section-heading">Drive Parameters</h3>
-                <div class="section-content"></div>
+                <div class="section-content" id="drive-params">
+
+    <label>
+        Amplitude &Omega; (MHz):
+        <input type="number" id="drive-amp" step="0.01" placeholder="e.g. 5.0">
+    </label>
+    <br><br>
+
+    <label>
+        Frequency Detuning &Delta; (MHz):
+        <input type="number" id="drive-detune" step="0.01" placeholder="e.g. -2.5">
+    </label>
+    <br><br>
+
+    <label>
+        Phase &phi; (degrees):
+        <input type="number" id="drive-phase" min="0" max="360" step="1" placeholder="0–360">
+    </label>
+    <br><br>
+
+    <label>
+        Pulse Duration t (ns):
+        <input type="number" id="drive-duration" step="0.1" placeholder="e.g. 20">
+    </label>
+    <br><br>
+
+    <label>
+        Pulse Shape:
+        <select id="drive-shape">
+            <option value="gaussian">Gaussian</option>
+            <option value="square">Square</option>
+            <option value="drag">DRAG</option>
+        </select>
+    </label>
+
+</div>
+
             </div>
 
             <div class="section">
