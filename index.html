@@ -240,6 +240,46 @@
     font-size: 0.75rem;
 }
 
+        #state-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.state-tab {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #3498db;
+    background: white;
+    color: #3498db;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.state-tab.active {
+    background: #3498db;
+    color: white;
+}
+
+.state-panel {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+#density-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+}
+
+#density-grid input {
+    width: 100%;
+    padding: 0.25rem;
+}
+
         
     </style>
 </head>
@@ -403,7 +443,50 @@
             
             <div class="section">
                 <h3 class="section-heading">State Info</h3>
-                <div class="section-content"></div>
+                <div class="section-content" id="state-info">
+
+    <!-- Tabs -->
+    <div id="state-tabs">
+        <button class="state-tab active" data-target="state-vector">Complex Vector</button>
+        <button class="state-tab" data-target="state-density">Density Matrix</button>
+        <button class="state-tab" data-target="state-bloch">XYZ Coordinates</button>
+    </div>
+
+    <!-- Panel 1: Complex State Vector -->
+    <div class="state-panel" id="state-vector">
+        <label>State Vector (4 complex amplitudes):</label>
+        <br><br>
+        <input type="text" id="vec-00" placeholder="a00 (e.g. 0.5)">
+        <input type="text" id="vec-01" placeholder="a01 (e.g. 0.5i)">
+        <input type="text" id="vec-10" placeholder="a10 (e.g. 0.5)">
+        <input type="text" id="vec-11" placeholder="a11 (e.g. -0.5i)">
+    </div>
+
+    <!-- Panel 2: Density Matrix -->
+    <div class="state-panel hidden" id="state-density">
+        <label>Density Matrix ρ (4×4 complex):</label>
+        <div id="density-grid"></div>
+    </div>
+
+    <!-- Panel 3: Bloch Coordinates -->
+    <div class="state-panel hidden" id="state-bloch">
+        <label>Qubit 0 (x, y, z):</label>
+        <br>
+        <input type="number" id="bloch0-x" step="0.01" placeholder="x0">
+        <input type="number" id="bloch0-y" step="0.01" placeholder="y0">
+        <input type="number" id="bloch0-z" step="0.01" placeholder="z0">
+
+        <br><br>
+
+        <label>Qubit 1 (x, y, z):</label>
+        <br>
+        <input type="number" id="bloch1-x" step="0.01" placeholder="x1">
+        <input type="number" id="bloch1-y" step="0.01" placeholder="y1">
+        <input type="number" id="bloch1-z" step="0.01" placeholder="z1">
+    </div>
+
+</div>
+
             </div>
 
             <div class="section">
