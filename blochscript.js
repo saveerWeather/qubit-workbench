@@ -265,4 +265,25 @@ createBlochSphere("bloch-sphere-1", "cam-phi-1", "cam-theta-1");
 
 initCustomMatrix();
 
-//test
+// =====================================================
+// Probability Bar API (you call this to update bars)
+// =====================================================
+
+export function updateProbabilityBars(probabilities) {
+    // expects array of 4 numbers between 0 and 1
+    const ids = ["prob-00", "prob-01", "prob-10", "prob-11"];
+
+    for (let i = 0; i < 4; i++) {
+        const bar = document.getElementById(ids[i]);
+        if (!bar) continue;
+
+        // Scale bar height (max = 120px)
+        bar.style.height = (probabilities[i] * 120) + "px";
+    }
+}
+
+// Example default: equal superposition
+window.addEventListener("DOMContentLoaded", () => {
+    updateProbabilityBars([0.25, 0.25, 0.25, 0.25]);
+});
+
