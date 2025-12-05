@@ -183,7 +183,6 @@ function createBlochSphere(containerId, phiSliderId, thetaSliderId) {
         camera.updateProjectionMatrix();
     });
 }
-// ↓↓↓ paste below this line ↓↓↓
 
 function initCustomMatrix() {
     const matrixContainer = document.getElementById("custom-matrix");
