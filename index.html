@@ -488,8 +488,9 @@
 
     <!-- Tabs -->
     <div id="state-tabs">
-        <button class="state-tab active" data-target="state-vector">Complex Vector</button>
-    </div>
+    <button class="state-tab active" data-target="state-vector">Complex Vector</button>
+    <button class="state-tab" data-target="state-full">Full 2-Qubit State</button>
+</div>
 
     <!-- Panel 1: Complex State Vector -->
     <div class="state-panel" id="state-vector">
@@ -500,6 +501,15 @@
         <input type="text" id="vec-10" placeholder="a10 (e.g. 0.5)">
         <input type="text" id="vec-11" placeholder="a11 (e.g. -0.5i)">
     </div>
+                    
+<!-- Panel 2: Full 2-Qubit State -->
+<div class="state-panel hidden" id="state-full">
+    <label>Full 2-Qubit State (α, β):</label>
+    <br><br>
+
+    <input type="text" id="alpha" placeholder="α (e.g. 0.8)">
+    <input type="text" id="beta"  placeholder="β (e.g. 0.6i)">
+</div>
 
 </div>
 <br><br>
