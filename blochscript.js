@@ -498,6 +498,13 @@ function applyState(){
 
         vec = normalize(vec);
 
+        // Update Bloch spheres
+const { bloch0, bloch1 } = getBlochVectors(vec);
+
+document.getElementById("bloch-sphere-0").updateBloch(bloch0);
+document.getElementById("bloch-sphere-1").updateBloch(bloch1);
+
+
         // Convert vector → α,β
         const { alpha, beta } = vectorToFull(vec);
         fillFullInputs(alpha, beta);
