@@ -403,6 +403,75 @@ function fillFullInputs(alpha, beta){
     document.getElementById("alpha").value = cToString(alpha);
     document.getElementById("beta").value  = cToString(beta);
 }
+// ===============================
+// Convert 2-qubit vector -> Bloch vectors
+// ===============================
+
+// Given amplitudes [a00, a01, a10, a11], compute Bloch vectors for each qubit.
+function getBlochVectors(vec) {
+    // Extract amplitudes
+    const a00 = vec[0];
+    const a01 = vec[1];
+    const a10 = vec[2];
+    const a11 = vec[3];
+
+    // Helper to compute ⟨ψ|σ|ψ⟩
+    const exp = (re, im) => ({ re, im });
+
+    function sigmaX(q) {
+        return q.re;
+    }
+
+    // Reduced density matrices
+    // ρ0 (trace out qubit 1)
+    const rho0 = {
+        xx: { re: a00.re*a00.re + a01.re*a01.re + a00.im*a00.im + a01.im*a01.im },
+        zz: { re: a00.re*a00.re + a10.re*a10.re + a00.im*a00.im + a10.im*a10.im }
+    };
+
+    // BUT we actually want direct expectation formulas:
+    // <X> = 2 Re(a00*conj(a10) + a01*conj(a11))
+    // <Y> = 2 Im(a00*conj(a10) + a01*conj(a11))
+    // <Z> = |a00|² + |a01|² - |a10|² - |a11|²
+
+    function blochForQubit0() {
+        const x = 2 * (
+            a00.re*a10.re + a00.im*a10.im +
+            a01.re*a11.re + a01.im*a11.im
+        );
+        const y = 2 * (
+            a00.re*a10.im - a00.im*a10.re +
+            a01.re*a11.im - a01.im*a11.re
+        );
+        const z =
+            (a00.re*a00.re + a00.im*a00.im + a01.re*a01.re + a01.im*a01.im) -
+            (a10.re*a10.re + a10.im*a10.im + a11.re*a11.re + a11.im*a11.im);
+
+        return new THREE.Vector3(x, y, z).normalize();
+    }
+
+    // For qubit 1, same formulas but grouping amplitudes by second index:
+    function blochForQubit1() {
+        const x = 2 * (
+            a00.re*a01.re + a00.im*a01.im +
+            a10.re*a11.re + a10.im*a11.im
+        );
+        const y = 2 * (
+            a00.re*a01.im - a00.im*a01.re +
+            a10.re*a11.im - a10.im*a11.re
+        );
+        const z =
+            (a00.re*a00.re + a00.im*a00.im + a10.re*a10.re + a10.im*a10.im) -
+            (a01.re*a01.re + a01.im*a01.im + a11.re*a11.re + a11.im*a11.im);
+
+        return new THREE.Vector3(x, y, z).normalize();
+    }
+
+    return {
+        bloch0: blochForQubit0(),
+        bloch1: blochForQubit1()
+    };
+}
 
 // =====================================================
 // APPLY STATE (reads whichever tab is active)
