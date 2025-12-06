@@ -488,6 +488,69 @@ document.getElementById("apply-state-btn").addEventListener("click", () => {
         document.getElementById("bloch1-y").value = b1.y.toFixed(4);
         document.getElementById("bloch1-z").value = b1.z.toFixed(4);
     }
+    /* ---------------------------------------------------------
+       CASE 3 — USER ENTERED BLOCH XYZ (PRODUCT STATE)
+       --------------------------------------------------------- */
+    if (activeTab === "state-bloch") {
+
+        // Read Bloch coordinates
+        let x0 = parseFloat(document.getElementById("bloch0-x").value);
+        let y0 = parseFloat(document.getElementById("bloch0-y").value);
+        let z0 = parseFloat(document.getElementById("bloch0-z").value);
+
+        let x1 = parseFloat(document.getElementById("bloch1-x").value);
+        let y1 = parseFloat(document.getElementById("bloch1-y").value);
+        let z1 = parseFloat(document.getElementById("bloch1-z").value);
+
+        // Convert Bloch vector → qubit state |ψ⟩
+        function blochToQubit(x,y,z) {
+            // Normalize if needed
+            let r = Math.sqrt(x*x + y*y + z*z);
+            if (r > 1e-6) {
+                x /= r; y /= r; z /= r;
+            }
+
+            // Standard Bloch sphere mapping:
+            let theta = Math.acos(z);
+            let phi = Math.atan2(y, x);
+
+            let a0 = math.complex(Math.cos(theta/2));
+            let a1 = math.complex(
+                Math.sin(theta/2) * Math.cos(phi),
+                Math.sin(theta/2) * Math.sin(phi)
+            );
+
+            return [a0, a1];
+        }
+
+        // Convert each Bloch vector to a qubit state
+        let q0 = blochToQubit(x0,y0,z0);
+        let q1 = blochToQubit(x1,y1,z1);
+
+        // Tensor product |ψ0> ⊗ |ψ1>
+        let vec = [
+            q0[0].mul(q1[0]), // |00>
+            q0[0].mul(q1[1]), // |01>
+            q0[1].mul(q1[0]), // |10>
+            q0[1].mul(q1[1])  // |11>
+        ];
+
+        vec = normalize(vec);
+
+        // Fill Complex Vector tab
+        document.getElementById("vec-00").value = cToString(vec[0]);
+        document.getElementById("vec-01").value = cToString(vec[1]);
+        document.getElementById("vec-10").value = cToString(vec[2]);
+        document.getElementById("vec-11").value = cToString(vec[3]);
+
+        // Create density matrix
+        let rho = vectorToDensity(vec);
+
+        // Fill density matrix UI
+        rho.forEach((c, i) => {
+            document.getElementById(`rho-${i}`).value = cToString(c);
+        });
+    }
 
 
 });
