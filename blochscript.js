@@ -96,6 +96,10 @@ function createBlochSphere(containerId, phiSliderId, thetaSliderId) {
         0.2
     );
     scene.add(arrow);
+// Public updater
+container.updateBloch = function(vec3) {
+    arrow.setDirection(vec3.clone().normalize());
+};
 
     // ----------------------------------------------------
     // Axis Labels
