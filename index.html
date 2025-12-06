@@ -478,10 +478,18 @@
     <div class="state-panel" id="state-vector">
         <label>State Vector (4 complex amplitudes):</label>
         <br><br>
-        <input type="text" id="vec-00" placeholder="a00 (e.g. 0.5)">
-        <input type="text" id="vec-01" placeholder="a01 (e.g. 0.5i)">
-        <input type="text" id="vec-10" placeholder="a10 (e.g. 0.5)">
-        <input type="text" id="vec-11" placeholder="a11 (e.g. -0.5i)">
+        <label>|00⟩:</label>
+<input type="text" id="vec-00" placeholder="a00">
+
+<label>|01⟩:</label>
+<input type="text" id="vec-01" placeholder="a01">
+
+<label>|10⟩:</label>
+<input type="text" id="vec-10" placeholder="a10">
+
+<label>|11⟩:</label>
+<input type="text" id="vec-11" placeholder="a11">
+
     </div>
                     
 <!-- Panel 2: Full 2-Qubit State -->
@@ -498,17 +506,6 @@
 <button id="apply-state-btn" class="apply-btn">Apply State</button>
 
             </div>
-
-            <div class="section">
-                <h3 class="section-heading">Hamiltonian Info</h3>
-                <div class="section-content"></div>
-            </div>
-
-            <div class="section">
-                <h3 class="section-heading">Unitary Info</h3>
-                <div class="section-content"></div>
-            </div>
-            <!-- ↓↓↓ paste below this line ↓↓↓ -->
 
 <div class="section" id="unitary-matrix-section">
     <h3 class="section-heading">Gate Matrix</h3>
