@@ -297,24 +297,19 @@ function initStateInfo() {
 
     tabs.forEach(tab => {
         tab.addEventListener("click", () => {
+            // Remove active from all tabs
             tabs.forEach(t => t.classList.remove("active"));
+
+            // Hide all panels
             panels.forEach(p => p.classList.add("hidden"));
 
+            // Activate clicked tab + show its panel
             tab.classList.add("active");
             document.getElementById(tab.dataset.target).classList.remove("hidden");
         });
     });
-
-    // Build density matrix inputs
-    const densityGrid = document.getElementById("density-grid");
-    for (let i = 0; i < 16; i++) {
-        const cell = document.createElement("input");
-        cell.type = "text";
-        cell.placeholder = `ρ${Math.floor(i/4)}${i%4}`;
-        cell.id = `rho-${i}`;
-        densityGrid.appendChild(cell);
-    }
 }
+
 
 window.addEventListener("DOMContentLoaded", initStateInfo);
 
