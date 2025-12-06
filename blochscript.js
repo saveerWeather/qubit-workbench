@@ -318,3 +318,110 @@ function initStateInfo() {
 
 window.addEventListener("DOMContentLoaded", initStateInfo);
 
+// ============================================================
+// AUTO-SYNC USING THE APPLY STATE BUTTON
+// ============================================================
+
+// Parse complex like "0.5", "0.5i", "-0.2 + 0.7i"
+function parseComplex(str) {
+    str = str.replace(/\s+/g, "");
+    if (str === "") return math.complex(0,0);
+    if (!str.match(/[ij]/)) return math.complex(parseFloat(str), 0);
+    return math.complex(str.replace("i","j"));
+}
+
+// Convert complex → string
+function cToString(c) {
+    let re = Number(c.re.toFixed(4));
+    let im = Number(c.im.toFixed(4));
+    if (im === 0) return `${re}`;
+    if (re === 0) return `${im}i`;
+    if (im > 0) return `${re} + ${im}i`;
+    return `${re} - ${Math.abs(im)}i`;
+}
+
+// Normalize a 4-component complex vector
+function normalize(vec) {
+    let norm = Math.sqrt(vec.reduce((s,v) => s + v.abs()**2, 0));
+    return vec.map(v => v.div(norm));
+}
+
+// Build 4×4 density matrix ρ = |ψ⟩⟨ψ|
+function vectorToDensity(vec) {
+    let rho = [];
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            rho.push(vec[i].mul(vec[j].conjugate()));
+        }
+    }
+    return rho;
+}
+
+// Compute reduced Bloch vector for qubit 0 or 1
+function densityToBloch(rho, qubit) {
+
+    // reshape to 4×4
+    let R = [];
+    for (let i = 0; i < 4; i++) R[i] = rho.slice(4*i,4*i+4);
+
+    let offset = qubit === 1 ? 2 : 0;
+
+    let red = [
+        [ math.complex(0,0), math.complex(0,0) ],
+        [ math.complex(0,0), math.complex(0,0) ]
+    ];
+
+    for (let a=0; a<2; a++) {
+        for (let b=0; b<2; b++) {
+            red[a][b] = R[a+offset][b+offset];
+        }
+    }
+
+    let x = math.re(red[0][1] + red[1][0]);
+    let y = math.re(math.complex(0,-1) * (red[0][1] - red[1][0]));
+    let z = math.re(red[0][0] - red[1][1]);
+
+    return {x,y,z};
+}
+
+// APPLY STATE BUTTON
+document.getElementById("apply-state-btn").addEventListener("click", () => {
+
+    let activeTab = document.querySelector(".state-tab.active").dataset.target;
+
+    /* ---------------------------------------------------------
+       CASE 1 — USER ENTERED COMPLEX VECTOR
+       --------------------------------------------------------- */
+    if (activeTab === "state-vector") {
+
+        let vec = [
+            parseComplex(document.getElementById("vec-00").value),
+            parseComplex(document.getElementById("vec-01").value),
+            parseComplex(document.getElementById("vec-10").value),
+            parseComplex(document.getElementById("vec-11").value)
+        ];
+
+        vec = normalize(vec);
+
+        let rho = vectorToDensity(vec);
+
+        // Fill density matrix
+        rho.forEach((c,i) => {
+            document.getElementById(`rho-${i}`).value = cToString(c);
+        });
+
+        // Fill Bloch XYZ
+        let b0 = densityToBloch(rho,0);
+        let b1 = densityToBloch(rho,1);
+
+        document.getElementById("bloch0-x").value = b0.x.toFixed(4);
+        document.getElementById("bloch0-y").value = b0.y.toFixed(4);
+        document.getElementById("bloch0-z").value = b0.z.toFixed(4);
+
+        document.getElementById("bloch1-x").value = b1.x.toFixed(4);
+        document.getElementById("bloch1-y").value = b1.y.toFixed(4);
+        document.getElementById("bloch1-z").value = b1.z.toFixed(4);
+    }
+
+});
+
