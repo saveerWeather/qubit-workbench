@@ -477,6 +477,9 @@ function getBlochVectors(vec) {
     };
 }
 
+function vectorToProbabilities(vec) {
+    return vec.map(c => (c.re * c.re + c.im * c.im));
+}
 // =====================================================
 // APPLY STATE (reads whichever tab is active)
 // =====================================================
@@ -508,6 +511,9 @@ document.getElementById("bloch-sphere-1").updateBloch(bloch1);
         // Convert vector → α,β
         const { alpha, beta } = vectorToFull(vec);
         fillFullInputs(alpha, beta);
+        // Update probability bars
+updateProbabilityBars(vectorToProbabilities(vec));
+
     }
 
     // -------- CASE 2: User entered α, β --------
@@ -525,6 +531,14 @@ document.getElementById("bloch-sphere-1").updateBloch(bloch1);
     let vec = fullToVector(alpha, beta);
     vec = normalize(vec);
     fillVectorInputs(vec);
+        // Update probability bars
+updateProbabilityBars(vectorToProbabilities(vec));
+
+// Update Bloch spheres (same as vector tab)
+const { bloch0, bloch1 } = getBlochVectors(vec);
+document.getElementById("bloch-sphere-0").updateBloch(bloch0);
+document.getElementById("bloch-sphere-1").updateBloch(bloch1);
+
 
     // Update Bloch spheres
     const { bloch0, bloch1 } = getBlochVectors(vec);
