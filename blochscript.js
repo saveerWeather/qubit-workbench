@@ -422,6 +422,73 @@ document.getElementById("apply-state-btn").addEventListener("click", () => {
         document.getElementById("bloch1-y").value = b1.y.toFixed(4);
         document.getElementById("bloch1-z").value = b1.z.toFixed(4);
     }
+        /* ---------------------------------------------------------
+       CASE 2 — USER ENTERED DENSITY MATRIX
+       --------------------------------------------------------- */
+    if (activeTab === "state-density") {
+
+        // Read 4×4 density matrix (flattened as rho[0..15])
+        let rho = [];
+        for (let i = 0; i < 16; i++) {
+            let raw = document.getElementById(`rho-${i}`).value;
+            rho.push(parseComplex(raw));
+        }
+
+        // Convert flat 16 array to 4×4 matrix R
+        let R = [];
+        for (let i = 0; i < 4; i++) {
+            R[i] = rho.slice(i * 4, i * 4 + 4);
+        }
+
+        // Check purity: ρ^2 = ρ and Tr(ρ) = 1
+        let R2 = math.multiply(R, R);
+        let pure = true;
+
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                let diff = math.subtract(R2[i][j], R[i][j]);
+                if (math.abs(diff) > 1e-6) pure = false;
+            }
+        }
+
+        if (!pure) {
+            alert("Density matrix is NOT pure. Cannot extract a state vector.");
+            return;
+        }
+
+        // Extract eigenvector with eigenvalue 1
+        let eig = math.eigs(R);
+        let vecIndex = eig.values.findIndex(v => Math.abs(v - 1) < 1e-6);
+
+        if (vecIndex === -1) {
+            alert("Could not find eigenvalue 1. Invalid pure state.");
+            return;
+        }
+
+        let eigenvector = eig.vectors[vecIndex];
+
+        // Normalize eigenvector
+        eigenvector = normalize(eigenvector);
+
+        // Fill Complex Vector tab
+        document.getElementById("vec-00").value = cToString(eigenvector[0]);
+        document.getElementById("vec-01").value = cToString(eigenvector[1]);
+        document.getElementById("vec-10").value = cToString(eigenvector[2]);
+        document.getElementById("vec-11").value = cToString(eigenvector[3]);
+
+        // Fill Bloch XYZ
+        let b0 = densityToBloch(rho, 0);
+        let b1 = densityToBloch(rho, 1);
+
+        document.getElementById("bloch0-x").value = b0.x.toFixed(4);
+        document.getElementById("bloch0-y").value = b0.y.toFixed(4);
+        document.getElementById("bloch0-z").value = b0.z.toFixed(4);
+
+        document.getElementById("bloch1-x").value = b1.x.toFixed(4);
+        document.getElementById("bloch1-y").value = b1.y.toFixed(4);
+        document.getElementById("bloch1-z").value = b1.z.toFixed(4);
+    }
+
 
 });
 
