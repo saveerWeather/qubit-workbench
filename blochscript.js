@@ -534,24 +534,8 @@ updateProbabilityBars(vectorToProbabilities(vec));
         // Update probability bars
 updateProbabilityBars(vectorToProbabilities(vec));
 
-// Update Bloch spheres (same as vector tab)
-const { bloch0, bloch1 } = getBlochVectors(vec);
-document.getElementById("bloch-sphere-0").updateBloch(bloch0);
-document.getElementById("bloch-sphere-1").updateBloch(bloch1);
 
 
-    // Update Bloch spheres
-    const { bloch0, bloch1 } = getBlochVectors(vec);
-    document.getElementById("bloch-sphere-0").updateBloch(bloch0);
-    document.getElementById("bloch-sphere-1").updateBloch(bloch1);
-
-    // Update probability bars
-    updateProbabilityBars([
-        vec[0].re*vec[0].re + vec[0].im*vec[0].im,  // |00>
-        vec[1].re*vec[1].re + vec[1].im*vec[1].im,  // |01>
-        vec[2].re*vec[2].re + vec[2].im*vec[2].im,  // |10>
-        vec[3].re*vec[3].re + vec[3].im*vec[3].im   // |11>
-    ]);
 }
 
 }
