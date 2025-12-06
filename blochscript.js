@@ -243,6 +243,12 @@ btnCnot.addEventListener("click", () => {
    // CZ button: set to controlled-Z matrix
 // Basis: |00>, |01>, |10>, |11>
 btnCz.addEventListener("click", () => {
+    // DECOMPOSE button (placeholder)
+const btnDecompose = document.getElementById("gate-decompose");
+btnDecompose.addEventListener("click", () => {
+    alert("Coming soon: matrix → gate decomposition!");
+});
+
     const czValues = [
         "1", "0", "0", "0",
         "0", "1", "0", "0",
