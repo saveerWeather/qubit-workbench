@@ -116,7 +116,8 @@
 
         .bloch-sphere-canvas {
             flex: 1;
-            min-height: 400px;
+            min-height: 325px;
+            max-height: 325px;
             background-color: #fafafa;
             border: 1px dashed #ddd;
             border-radius: 3px;
@@ -519,19 +520,25 @@
 
 <div class="section" id="unitary-matrix-section">
     <h3 class="section-heading">Gate Matrix</h3>
+    <div class="section" id="unitary-matrix-section">
+    <h3 class="section-heading">Gate Matrix</h3>
+
     <div class="section-content">
         <div id="gate-buttons">
             <button id="gate-cnot" type="button">CNOT</button>
             <button id="gate-cz" type="button">CZ</button>
         </div>
-        <div class="matrix-title">Custom</div>
-        <div id="custom-matrix" class="matrix-grid">
 
-        <button id="gate-decompose" class="apply-btn" style="margin-top:10px;">
-            Decompose
-        </button>
-            <!-- cells created by JavaScript -->
-        </div>
+        <div class="matrix-title">Custom</div>
+        <div id="custom-matrix" class="matrix-grid"></div>
+    </div>
+</div>
+
+<!-- ↓ Button goes here, below the whole matrix section ↓ -->
+<button id="gate-decompose" class="apply-btn" style="margin-top: 1rem; width: 100%;">
+    Decompose
+</button>
+
     </div>
 </div>
 
