@@ -318,240 +318,134 @@ function initStateInfo() {
 
 window.addEventListener("DOMContentLoaded", initStateInfo);
 
-// ============================================================
-// AUTO-SYNC USING THE APPLY STATE BUTTON
-// ============================================================
+// =====================================================
+// 2-TAB AUTO-SYNC ENGINE (Complex Vector <-> Full 2-Qubit State)
+// =====================================================
 
-// Parse complex like "0.5", "0.5i", "-0.2 + 0.7i"
+// -------- Complex number parser --------
 function parseComplex(str) {
-    str = str.replace(/\s+/g, "");
-    if (str === "") return math.complex(0,0);
-    if (!str.match(/[ij]/)) return math.complex(parseFloat(str), 0);
-    return math.complex(str.replace("i","j"));
-}
+    str = str.trim();
+    if (str === "") return null;
 
-// Convert complex → string
-function cToString(c) {
-    let re = Number(c.re.toFixed(4));
-    let im = Number(c.im.toFixed(4));
-    if (im === 0) return `${re}`;
-    if (re === 0) return `${im}i`;
-    if (im > 0) return `${re} + ${im}i`;
-    return `${re} - ${Math.abs(im)}i`;
-}
-
-// Normalize a 4-component complex vector
-function normalize(vec) {
-    let norm = Math.sqrt(vec.reduce((s,v) => s + v.abs()**2, 0));
-    return vec.map(v => v.div(norm));
-}
-
-// Build 4×4 density matrix ρ = |ψ⟩⟨ψ|
-function vectorToDensity(vec) {
-    let rho = [];
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            rho.push(vec[i].mul(vec[j].conjugate()));
-        }
+    // Pure imaginary (e.g., 0.5i, -2i)
+    if (/^[+-]?\d*\.?\d*i$/.test(str)) {
+        return { re: 0, im: parseFloat(str.replace("i","")) || 0 };
     }
-    return rho;
+
+    // a + bi
+    const m = str.match(/^([+-]?\d*\.?\d*)([+-]\d*\.?\d*)i$/);
+    if (m) return { re: parseFloat(m[1]), im: parseFloat(m[2]) };
+
+    // Real only
+    const n = parseFloat(str);
+    if (!isNaN(n)) return { re: n, im: 0 };
+
+    return null;
 }
 
-// Compute reduced Bloch vector for qubit 0 or 1
-function densityToBloch(rho, qubit) {
+// -------- Complex multiply --------
+function cMul(a,b){
+    return { re: a.re*b.re - a.im*b.im,
+             im: a.re*b.im + a.im*b.re };
+}
 
-    // reshape to 4×4
-    let R = [];
-    for (let i = 0; i < 4; i++) R[i] = rho.slice(4*i,4*i+4);
-
-    let offset = qubit === 1 ? 2 : 0;
-
-    let red = [
-        [ math.complex(0,0), math.complex(0,0) ],
-        [ math.complex(0,0), math.complex(0,0) ]
+// -------- Convert α,β → 4 amplitudes (tensor product) --------
+// |ψ⟩ = α|0⟩ + β|1⟩ for each qubit
+// Full 2-qubit state = (α|0⟩ + β|1⟩) ⊗ (α|0⟩ + β|1⟩)
+function fullToVector(alpha, beta) {
+    return [
+        cMul(alpha, alpha), // |00>
+        cMul(alpha, beta),  // |01>
+        cMul(beta, alpha),  // |10>
+        cMul(beta, beta)    // |11>
     ];
-
-    for (let a=0; a<2; a++) {
-        for (let b=0; b<2; b++) {
-            red[a][b] = R[a+offset][b+offset];
-        }
-    }
-
-    let x = math.re(red[0][1] + red[1][0]);
-    let y = math.re(math.complex(0,-1) * (red[0][1] - red[1][0]));
-    let z = math.re(red[0][0] - red[1][1]);
-
-    return {x,y,z};
 }
 
-// APPLY STATE BUTTON
-document.getElementById("apply-state-btn").addEventListener("click", () => {
+// -------- Convert vector → α, β (approx for separable states) --------
+function cSqrt(z){
+    const r = Math.sqrt(Math.sqrt(z.re*z.re + z.im*z.im));
+    const theta = Math.atan2(z.im, z.re) / 2;
+    return { re: r*Math.cos(theta), im: r*Math.sin(theta) };
+}
 
-    let activeTab = document.querySelector(".state-tab.active").dataset.target;
+function vectorToFull(vec) {
+    return {
+        alpha: cSqrt(vec[0]), // α ≈ sqrt(a00)
+        beta:  cSqrt(vec[3])  // β ≈ sqrt(a11)
+    };
+}
 
-    /* ---------------------------------------------------------
-       CASE 1 — USER ENTERED COMPLEX VECTOR
-       --------------------------------------------------------- */
-    if (activeTab === "state-vector") {
+// -------- Formatting back to text --------
+function cToString(z){
+    let re = z.re.toFixed(3);
+    let im = z.im.toFixed(3);
+    if (z.im >= 0) return `${re}+${im}i`;
+    return `${re}${im}i`;
+}
 
-        let vec = [
-            parseComplex(document.getElementById("vec-00").value),
-            parseComplex(document.getElementById("vec-01").value),
-            parseComplex(document.getElementById("vec-10").value),
-            parseComplex(document.getElementById("vec-11").value)
-        ];
+// -------- Normalize a vector --------
+function normalize(vec) {
+    let norm = Math.sqrt(vec.reduce((s,v)=> s + (v.re*v.re + v.im*v.im), 0));
+    if (norm === 0) return vec;
+    return vec.map(v => ({ re: v.re/norm, im: v.im/norm }));
+}
+
+// -------- Fill UI functions --------
+function fillVectorInputs(vec) {
+    const ids = ["vec-00","vec-01","vec-10","vec-11"];
+    for (let i=0;i<4;i++){
+        document.getElementById(ids[i]).value = cToString(vec[i]);
+    }
+}
+
+function fillFullInputs(alpha, beta){
+    document.getElementById("alpha").value = cToString(alpha);
+    document.getElementById("beta").value  = cToString(beta);
+}
+
+// =====================================================
+// APPLY STATE (reads whichever tab is active)
+// =====================================================
+function applyState(){
+
+    const active = document.querySelector(".state-tab.active").dataset.target;
+
+    // -------- CASE 1: User entered a 4-amplitude vector --------
+    if (active === "state-vector"){
+
+        const ids = ["vec-00","vec-01","vec-10","vec-11"];
+        let vec = [];
+
+        for (let id of ids){
+            let c = parseComplex(document.getElementById(id).value);
+            if (!c){ alert("Invalid complex amplitude"); return; }
+            vec.push(c);
+        }
 
         vec = normalize(vec);
 
-        let rho = vectorToDensity(vec);
-
-        // Fill density matrix
-        rho.forEach((c,i) => {
-            document.getElementById(`rho-${i}`).value = cToString(c);
-        });
-
-        // Fill Bloch XYZ
-        let b0 = densityToBloch(rho,0);
-        let b1 = densityToBloch(rho,1);
-
-        document.getElementById("bloch0-x").value = b0.x.toFixed(4);
-        document.getElementById("bloch0-y").value = b0.y.toFixed(4);
-        document.getElementById("bloch0-z").value = b0.z.toFixed(4);
-
-        document.getElementById("bloch1-x").value = b1.x.toFixed(4);
-        document.getElementById("bloch1-y").value = b1.y.toFixed(4);
-        document.getElementById("bloch1-z").value = b1.z.toFixed(4);
+        // Convert vector → α,β
+        const { alpha, beta } = vectorToFull(vec);
+        fillFullInputs(alpha, beta);
     }
-        /* ---------------------------------------------------------
-       CASE 2 — USER ENTERED DENSITY MATRIX
-       --------------------------------------------------------- */
-    if (activeTab === "state-density") {
 
-        // Read 4×4 density matrix (flattened as rho[0..15])
-        let rho = [];
-        for (let i = 0; i < 16; i++) {
-            let raw = document.getElementById(`rho-${i}`).value;
-            rho.push(parseComplex(raw));
-        }
+    // -------- CASE 2: User entered α, β --------
+    else if (active === "state-full"){
 
-        // Convert flat 16 array to 4×4 matrix R
-        let R = [];
-        for (let i = 0; i < 4; i++) {
-            R[i] = rho.slice(i * 4, i * 4 + 4);
-        }
+        let alpha = parseComplex(document.getElementById("alpha").value);
+        let beta  = parseComplex(document.getElementById("beta").value);
 
-        // Check purity: ρ^2 = ρ and Tr(ρ) = 1
-        let R2 = math.multiply(R, R);
-        let pure = true;
-
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                let diff = math.subtract(R2[i][j], R[i][j]);
-                if (math.abs(diff) > 1e-6) pure = false;
-            }
-        }
-
-        if (!pure) {
-            alert("Density matrix is NOT pure. Cannot extract a state vector.");
+        if (!alpha || !beta){
+            alert("Invalid α or β");
             return;
         }
 
-        // Extract eigenvector with eigenvalue 1
-        let eig = math.eigs(R);
-        let vecIndex = eig.values.findIndex(v => Math.abs(v - 1) < 1e-6);
-
-        if (vecIndex === -1) {
-            alert("Could not find eigenvalue 1. Invalid pure state.");
-            return;
-        }
-
-        let eigenvector = eig.vectors[vecIndex];
-
-        // Normalize eigenvector
-        eigenvector = normalize(eigenvector);
-
-        // Fill Complex Vector tab
-        document.getElementById("vec-00").value = cToString(eigenvector[0]);
-        document.getElementById("vec-01").value = cToString(eigenvector[1]);
-        document.getElementById("vec-10").value = cToString(eigenvector[2]);
-        document.getElementById("vec-11").value = cToString(eigenvector[3]);
-
-        // Fill Bloch XYZ
-        let b0 = densityToBloch(rho, 0);
-        let b1 = densityToBloch(rho, 1);
-
-        document.getElementById("bloch0-x").value = b0.x.toFixed(4);
-        document.getElementById("bloch0-y").value = b0.y.toFixed(4);
-        document.getElementById("bloch0-z").value = b0.z.toFixed(4);
-
-        document.getElementById("bloch1-x").value = b1.x.toFixed(4);
-        document.getElementById("bloch1-y").value = b1.y.toFixed(4);
-        document.getElementById("bloch1-z").value = b1.z.toFixed(4);
-    }
-    /* ---------------------------------------------------------
-       CASE 3 — USER ENTERED BLOCH XYZ (PRODUCT STATE)
-       --------------------------------------------------------- */
-    if (activeTab === "state-bloch") {
-
-        // Read Bloch coordinates
-        let x0 = parseFloat(document.getElementById("bloch0-x").value);
-        let y0 = parseFloat(document.getElementById("bloch0-y").value);
-        let z0 = parseFloat(document.getElementById("bloch0-z").value);
-
-        let x1 = parseFloat(document.getElementById("bloch1-x").value);
-        let y1 = parseFloat(document.getElementById("bloch1-y").value);
-        let z1 = parseFloat(document.getElementById("bloch1-z").value);
-
-        // Convert Bloch vector → qubit state |ψ⟩
-        function blochToQubit(x,y,z) {
-            // Normalize if needed
-            let r = Math.sqrt(x*x + y*y + z*z);
-            if (r > 1e-6) {
-                x /= r; y /= r; z /= r;
-            }
-
-            // Standard Bloch sphere mapping:
-            let theta = Math.acos(z);
-            let phi = Math.atan2(y, x);
-
-            let a0 = math.complex(Math.cos(theta/2));
-            let a1 = math.complex(
-                Math.sin(theta/2) * Math.cos(phi),
-                Math.sin(theta/2) * Math.sin(phi)
-            );
-
-            return [a0, a1];
-        }
-
-        // Convert each Bloch vector to a qubit state
-        let q0 = blochToQubit(x0,y0,z0);
-        let q1 = blochToQubit(x1,y1,z1);
-
-        // Tensor product |ψ0> ⊗ |ψ1>
-        let vec = [
-            q0[0].mul(q1[0]), // |00>
-            q0[0].mul(q1[1]), // |01>
-            q0[1].mul(q1[0]), // |10>
-            q0[1].mul(q1[1])  // |11>
-        ];
-
+        // Convert α,β → full vector
+        let vec = fullToVector(alpha, beta);
         vec = normalize(vec);
-
-        // Fill Complex Vector tab
-        document.getElementById("vec-00").value = cToString(vec[0]);
-        document.getElementById("vec-01").value = cToString(vec[1]);
-        document.getElementById("vec-10").value = cToString(vec[2]);
-        document.getElementById("vec-11").value = cToString(vec[3]);
-
-        // Create density matrix
-        let rho = vectorToDensity(vec);
-
-        // Fill density matrix UI
-        rho.forEach((c, i) => {
-            document.getElementById(`rho-${i}`).value = cToString(c);
-        });
+        fillVectorInputs(vec);
     }
+}
 
-
-});
-
+// Attach button
+document.getElementById("apply-state-btn").addEventListener("click", applyState);
