@@ -319,6 +319,30 @@
     #state-vector input[type="text"] {
         width: 120px;     /* consistent input field width */
     }
+/* ============================
+   State Vector Input Formatting
+   ============================ */
+.vector-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+}
+
+.vg-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vg-cell span {
+    font-weight: 600;
+    min-width: 45px;
+}
+
+.vg-cell input {
+    width: 120px;
+}
 
 </style>
 
@@ -517,20 +541,30 @@
         <label>|00⟩:</label>
 <div class="state-panel" id="state-vector">
     <label>State Vector (4 complex amplitudes):</label>
-    <br><br>
+<br><br>
 
-    <div class="state-row">
-        <span class="ket-label">|00⟩:</span>
+<div class="vector-grid">
+    <div class="vg-cell">
+        <span>|00⟩:</span>
         <input type="text" id="vec-00" placeholder="a00">
-        <span class="ket-label">|01⟩:</span>
+    </div>
+
+    <div class="vg-cell">
+        <span>|01⟩:</span>
         <input type="text" id="vec-01" placeholder="a01">
     </div>
 
-    <div class="state-row">
-        <span class="ket-label">|10⟩:</span>
+    <div class="vg-cell">
+        <span>|10⟩:</span>
         <input type="text" id="vec-10" placeholder="a10">
-        <span class="ket-label">|11⟩:</span>
+    </div>
+
+    <div class="vg-cell">
+        <span>|11⟩:</span>
         <input type="text" id="vec-11" placeholder="a11">
+    </div>
+</div>
+
     </div>
 </div>
 
