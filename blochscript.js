@@ -513,19 +513,33 @@ document.getElementById("bloch-sphere-1").updateBloch(bloch1);
     // -------- CASE 2: User entered α, β --------
     else if (active === "state-full"){
 
-        let alpha = parseComplex(document.getElementById("alpha").value);
-        let beta  = parseComplex(document.getElementById("beta").value);
+    let alpha = parseComplex(document.getElementById("alpha").value);
+    let beta  = parseComplex(document.getElementById("beta").value);
 
-        if (!alpha || !beta){
-            alert("Invalid α or β");
-            return;
-        }
-
-        // Convert α,β → full vector
-        let vec = fullToVector(alpha, beta);
-        vec = normalize(vec);
-        fillVectorInputs(vec);
+    if (!alpha || !beta){
+        alert("Invalid α or β");
+        return;
     }
+
+    // Convert α,β → full vector
+    let vec = fullToVector(alpha, beta);
+    vec = normalize(vec);
+    fillVectorInputs(vec);
+
+    // Update Bloch spheres
+    const { bloch0, bloch1 } = getBlochVectors(vec);
+    document.getElementById("bloch-sphere-0").updateBloch(bloch0);
+    document.getElementById("bloch-sphere-1").updateBloch(bloch1);
+
+    // Update probability bars
+    updateProbabilityBars([
+        vec[0].re*vec[0].re + vec[0].im*vec[0].im,  // |00>
+        vec[1].re*vec[1].re + vec[1].im*vec[1].im,  // |01>
+        vec[2].re*vec[2].re + vec[2].im*vec[2].im,  // |10>
+        vec[3].re*vec[3].re + vec[3].im*vec[3].im   // |11>
+    ]);
+}
+
 }
 
 // Attach button
