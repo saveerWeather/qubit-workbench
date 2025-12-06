@@ -490,16 +490,24 @@
         <label>State Vector (4 complex amplitudes):</label>
         <br><br>
         <label>|00⟩:</label>
-<input type="text" id="vec-00" placeholder="a00">
+<div class="state-panel" id="state-vector">
+    <label>State Vector (4 complex amplitudes):</label>
+    <br><br>
 
-<label>|01⟩:</label>
-<input type="text" id="vec-01" placeholder="a01">
+    <div class="state-row">
+        <span class="ket-label">|00⟩:</span>
+        <input type="text" id="vec-00" placeholder="a00">
+        <span class="ket-label">|01⟩:</span>
+        <input type="text" id="vec-01" placeholder="a01">
+    </div>
 
-<label>|10⟩:</label>
-<input type="text" id="vec-10" placeholder="a10">
-
-<label>|11⟩:</label>
-<input type="text" id="vec-11" placeholder="a11">
+    <div class="state-row">
+        <span class="ket-label">|10⟩:</span>
+        <input type="text" id="vec-10" placeholder="a10">
+        <span class="ket-label">|11⟩:</span>
+        <input type="text" id="vec-11" placeholder="a11">
+    </div>
+</div>
 
     </div>
                     
