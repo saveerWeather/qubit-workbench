@@ -1,0 +1,153 @@
+/* ========================= */
+/* Global Styles */
+/* ========================= */
+body {
+  font-family: system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #333;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #0d47a1;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ========================= */
+/* Navigation */
+/* ========================= */
+.main-nav {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav a {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+
+.main-nav a.active {
+  background-color: #e7f0ff;
+  color: #0d47a1;
+  font-weight: 600;
+}
+
+/* ========================= */
+/* Table of Contents */
+/* ========================= */
+.toc {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.toc ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+.toc a {
+  color: #0d47a1;
+}
+
+.toc a:hover {
+  text-decoration: underline;
+}
+
+/* ========================= */
+/* Page Header */
+/* ========================= */
+.page-header {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+/* ========================= */
+/* Sections */
+/* ========================= */
+main#content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.explain-section {
+  padding: 30px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.explain-section h2 {
+  font-size: 1.8rem;
+  color: #0d47a1;
+  margin-top: 0;
+}
+
+.explain-section h3 {
+  font-size: 1.3rem;
+  color: #1a237e;
+}
+
+/* Smooth scrolling anchor offset */
+.explain-section::before {
+  content: "";
+  display: block;
+  height: 80px; /* match nav height */
+  margin-top: -80px;
+  visibility: hidden;
+}
+
+/* ========================= */
+/* Notes & Code Blocks */
+/* ========================= */
+.note {
+  background-color: #e3f2fd;
+  padding: 10px 15px;
+  border-left: 4px solid #0d47a1;
+  margin: 15px 0;
+}
+
+.code {
+  background-color: #f6f8fa;
+  font-family: monospace;
+  padding: 8px;
+  border-radius: 4px;
+  display: block;
+  margin: 10px 0;
+}
+
+/* ========================= */
+/* Footer */
+/* ========================= */
+.page-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #666;
+  border-top: 1px solid #eee;
+}
