@@ -1923,12 +1923,12 @@ function updatePhysicalImplementation(instruction) {
         titleElement.textContent = 'PHYSICAL IMPLEMENTATION';
         
         // Restore default image
-        imageElement.src = 'assets/animations/default.png';
+        imageElement.src = 'assets/animations/basic.png';
     } else {
         // Default: restore everything
         q1DriveFreqInput.value = window.originalQ1DriveFreq;
         q0DriveFreqInput.value = window.originalQ0DriveFreq;
         titleElement.textContent = 'PHYSICAL IMPLEMENTATION';
-        imageElement.src = 'assets/animations/default.png';
+        imageElement.src = 'assets/animations/basic.png';
     }
 }
