@@ -7,6 +7,9 @@
 
     <link rel="stylesheet" href="assets/css/style.css" />
 
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
      <link rel="stylesheet" href="assets/css/style.css" />
     <style>
         * {
@@ -21,6 +24,7 @@
             display: flex;
             flex-direction: column;
             background-color: #f5f5f5;
+            overflow-x: hidden;
         }
 
         header {
@@ -28,11 +32,53 @@
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         header h1 {
             font-size: 1.5rem;
             font-weight: 600;
+            margin: 0;
+        }
+
+        header .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        header .main-nav {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            padding: 0 !important;
+        }
+        
+        header .main-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            background-color: transparent !important;
+        }
+
+        header .main-nav a:hover {
+            color: white;
+        }
+
+        header .main-nav a.active {
+            color: white;
+            font-weight: 600;
+            border-bottom: 2px solid white;
+            padding-bottom: 2px;
+            background-color: transparent !important;
+        }
+        
+        header .main-nav a {
+            background-color: transparent !important;
         }
 
         main {
@@ -42,29 +88,68 @@
             overflow: hidden;
             gap: 1rem;
             padding: 1rem;
+            min-height: 0;
+            min-width: 0;
         }
 
         footer {
             width: 100%;
             text-align: right;
-            padding-top: 6pt;
-            padding-bottom: 6pt;
+            padding-top: 3pt;
+            padding-bottom: 3pt;
             padding-right: 10pt;
             background-color: #2c3e50;
             color: white;
         }
+        
+        footer h3 {
+            font-size: 0.7rem;
+            margin: 0;
+        }
 
         .panel {
-            flex: 0.8;
+            flex: 1;
             background-color: white;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             padding: 1.5rem;
             overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            min-width: 0;
+            position: relative;
         }
+
+        #controls-panel {
+            flex: 0.7;
+        }
+
+        .resize-handle {
+            position: absolute;
+            right: -5px;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            cursor: col-resize;
+            z-index: 100;
+            background: transparent;
+        }
+
+        .resize-handle.left {
+            right: auto;
+            left: -5px;
+        }
+
+        .resize-handle:hover {
+            background: rgba(52, 152, 219, 0.3);
+        }
+
+        .resize-handle:active {
+            background: rgba(52, 152, 219, 0.5);
+        }
+
 
         .panel h2 {
             font-size: 1.25rem;
@@ -112,12 +197,18 @@
 
         #bloch-sphere-panel {
             flex: 2;
+            min-width: 0;
+            overflow: visible;
+            padding: 1rem;
+        }
+
+        #controls-panel {
+            min-width: 0;
         }
 
         .bloch-sphere-canvas {
-            flex: 1;
-            min-height: 325px;
-            max-height: 325px;
+            width: 280px;
+            height: 280px;
             background-color: #fafafa;
             border: 1px dashed #ddd;
             border-radius: 3px;
@@ -133,13 +224,13 @@
 }
 
 #gate-buttons {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
 #gate-buttons button {
-    flex: 1;
     padding: 0.4rem 0.5rem;
     border-radius: 3px;
     border: 1px solid #3498db;
@@ -163,28 +254,152 @@
 .matrix-title {
     font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.matrix-container {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0.25rem auto 0;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.matrix-bracket {
+    font-size: 3rem;
+    line-height: 0.75;
+    color: #333;
+    user-select: none;
 }
 
 .matrix-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.25rem;
-    margin-top: 0.25rem;
+    gap: 0.5rem;
+    padding: 0.25rem;
 }
 
 .matrix-cell {
-    width: 100%;
-    padding: 0.3rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
 }
 
-.matrix-cell:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 1px rgba(52, 152, 219, 0.2);
+.matrix-cell input {
+    width: 48px;
+    padding: 0.15rem 0.15rem;
+    text-align: center;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+
+.matrix-cell input:focus {
+    background-color: #e3f2fd;
+    outline: 1px solid #3498db;
+}
+
+/* Remove number input spinner arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* ===== Main Tabs Styling ===== */
+.main-tabs-container {
+    display: flex;
+    gap: 0;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.main-tab {
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-right: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    text-align: center;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.main-tab:last-child {
+    border-right: none;
+}
+
+.main-tab:hover {
+    background-color: #e8e8e8;
+}
+
+.main-tab.active {
+    background-color: white;
+    color: #2c3e50;
+    border-bottom: 2px solid white;
+    margin-bottom: -2px;
+}
+
+/* ===== Display Mode Tabs (Symbols/Values) ===== */
+.display-tabs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.display-tab {
+    padding: 0.6rem 0.8rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    text-align: center;
+    min-width: 80px;
+}
+
+.display-tab:last-child {
+    border-bottom: none;
+}
+
+.display-tab:hover {
+    background-color: #e8e8e8;
+}
+
+.display-tab.active {
+    background-color: #fafafa;
+    color: #2c3e50;
+    font-weight: 600;
+    border-right: 3px solid #3498db;
+}
+
+.latex-display-area {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #fafafa;
+    border-radius: 4px;
+    text-align: center;
+    min-height: 80px;
 }
 
 /* ==== State Info Validation Styling ==== */
@@ -194,6 +409,88 @@
     background-color: #ffe6e6;
 }
         
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .matrix-cell input {
+                width: 43px;
+                font-size: 0.6rem;
+                padding: 0.12rem;
+            }
+
+            .section-content {
+                padding: 0.75rem;
+            }
+
+            .latex-display-area {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            #gate-buttons button {
+                font-size: 0.8rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2.8rem;
+            }
+
+            .matrix-grid {
+                gap: 0.4rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            main {
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+
+            .panel {
+                flex: 1;
+                min-width: 280px;
+            }
+
+            .matrix-cell input {
+                width: 40px;
+                font-size: 0.55rem;
+                padding: 0.1rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2.5rem;
+            }
+
+            .matrix-grid {
+                gap: 0.3rem;
+            }
+
+            #gate-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            #gate-buttons button {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.4rem;
+            }
+
+            .matrix-title {
+                font-size: 0.75rem;
+            }
+
+            .panel h2 {
+                font-size: 1.1rem;
+            }
+
+            .section-heading {
+                font-size: 0.8rem;
+            }
+        }
+
         /* Mobile responsive */
         @media (max-width: 768px) {
             main {
@@ -207,48 +504,75 @@
             .bloch-sphere-canvas {
                 min-height: 300px;
             }
+
+            .matrix-cell input {
+                width: 32px;
+                font-size: 0.5rem;
+                padding: 0.08rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2rem;
+            }
+
+            .matrix-grid {
+                gap: 0.25rem;
+            }
+
+            #matrix-error {
+                font-size: 0.75rem;
+            }
+
+            .panel h2 {
+                font-size: 1rem;
+            }
         }
 
-/* ==== Probability Bars Styling ==== */
-#probability-bars {
-    width: 100%;
-    padding: 0.5rem 0;
+/* ==== Horizontal Probability Bars Styling ==== */
+.prob-bar-horizontal {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    gap: 0.3rem;
 }
 
-#prob-title {
+.prob-label-left {
     font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
+    font-weight: 500;
+    width: auto;
+    flex-shrink: 0;
+    color: #495057;
+    font-family: 'Times New Roman', serif;
+    white-space: nowrap;
 }
 
-#prob-bars-row {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 1rem;
-    width: 80%;
+.prob-bar-bg {
+    width: 170px;
+    flex-shrink: 0;
+    height: 26px;
+    background-color: #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
 }
 
-.prob-bar-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.prob-bar-fill {
+    height: 100%;
+    width: 0%; /* default: zero prob */
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+    position: relative;
 }
 
-.prob-bar {
-    width: 30px;
-    height: 0px; /* default: zero prob */
-    background-color: #3498db;
-    border-radius: 4px;
-    transition: height 0.3s ease;
-}
-
-.prob-label {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
+.prob-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
 }
         /* === Apply State Button Styling === */
 .apply-btn {
@@ -270,23 +594,44 @@
 
         #state-tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    flex-direction: row;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 2px solid #e0e0e0;
 }
 
 .state-tab {
-    padding: 0.3rem 0.6rem;
-    border: 1px solid #3498db;
-    background: white;
-    color: #3498db;
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-right: 1px solid #e0e0e0;
     cursor: pointer;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    text-align: center;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.state-tab:last-child {
+    border-right: none;
+}
+
+.state-tab:hover {
+    background-color: #e8e8e8;
 }
 
 .state-tab.active {
-    background: #3498db;
-    color: white;
+    background-color: white;
+    color: #2c3e50;
+    border-bottom: 2px solid white;
+    margin-bottom: -2px;
 }
 
 .state-panel {
@@ -296,8 +641,21 @@
 .hidden {
     display: none;
 }
-<style>
-    /* … your existing styles … */
+
+/* Bloch sphere arrow controls */
+.bloch-arrow-btn {
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.bloch-arrow-btn:hover {
+    background: rgba(52, 152, 219, 0.9) !important;
+    color: white;
+    transform: scale(1.1) !important;
+}
+
+.bloch-arrow-btn:active {
+    transform: scale(0.95) !important;
+}
 
 
     /* ============================
@@ -350,254 +708,523 @@
     </style>
 </head>
 <body>
-    <nav class="main-nav" aria-label="Main navigation">
-  <ul>
-    <li><a href="index.html" class="nav-link active" aria-current="page">Simulator</a></li>
-    <li><a href="explain.html" class="nav-link">Explanations</a></li>
-  </ul>
-</nav>
-
     <header>
         <h1>Qubit Workbench</h1>
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul>
+                <li><a href="index.html" class="nav-link active" aria-current="page">Simulator</a></li>
+                <li><a href="explain.html" class="nav-link">Explanations</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <!-- Left Panel: Controls -->
+        <!-- Left Panel: Operations -->
         <section class="panel" id="controls-panel">
-            <h2>Controls</h2>
-            
-            <div class="section">
-                <h3 class="section-heading">Drive Parameters</h3>
-                <div class="section-content" id="drive-params">
-
-    <label>
-        Amplitude &Omega; (MHz):
-        <input type="number" id="drive-amp" step="0.01" placeholder="e.g. 5.0">
-    </label>
-    <br><br>
-
-    <label>
-        Frequency Detuning &Delta; (MHz):
-        <input type="number" id="drive-detune" step="0.01" placeholder="e.g. -2.5">
-    </label>
-    <br><br>
-
-    <label>
-        Phase &phi; (degrees):
-        <input type="number" id="drive-phase" min="0" max="360" step="1" placeholder="0–360">
-    </label>
-    <br><br>
-
-    <label>
-        Pulse Duration t (ns):
-        <input type="number" id="drive-duration" step="0.1" placeholder="e.g. 20">
-    </label>
-    <br><br>
-
-    <label>
-        Pulse Shape:
-        <select id="drive-shape">
-            <option value="gaussian">Gaussian</option>
-            <option value="square">Square</option>
-            <option value="drag">DRAG</option>
-        </select>
-    </label>
-
-</div>
-
+            <div class="resize-handle" id="controls-resize"></div>
+            <!-- Main Tabs -->
+            <div class="main-tabs-container">
+                <button class="main-tab active" data-target="state-info-panel">Initialize State</button>
+                <button class="main-tab" data-target="gate-matrix-panel">Quantum Gates</button>
+                <button class="main-tab" data-target="operations-panel-left">Operations</button>
             </div>
 
-            <div class="section">
-                <h3 class="section-heading">Noise & Decoherence</h3>
-                <div class="section-content" id="noise-params">
+            <!-- State Info Panel -->
+            <div class="state-panel" id="state-info-panel">
+                <div class="section">
+                    <h3 class="section-heading">INITIALIZE STATE</h3>
+                    <div class="section-content" id="state-info" style="padding: 0; position: relative;">
 
-    <label>
-        Relaxation Time T<sub>1</sub> (μs):
-        <input type="number" id="noise-T1" step="0.01" placeholder="e.g. 25">
-    </label>
-    <br><br>
+                        <!-- Tabs -->
+                        <div id="state-tabs">
+                            <button class="state-tab active" data-target="state-vector">Complex Vector</button>
+                            <button class="state-tab" data-target="state-full">Full 2-Qubit State</button>
+                        </div>
 
-    <label>
-        Dephasing Time T<sub>2</sub> (μs):
-        <input type="number" id="noise-T2" step="0.01" placeholder="e.g. 18">
-    </label>
-    <br><br>
+                        <!-- Panel 1: Complex State Vector -->
+                        <div class="state-panel" id="state-vector" style="padding: 1rem; padding-top: 0.5rem;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.75rem;">State Vector (4 complex amplitudes):</div>
 
-    <label>
-        Depolarizing Probability p:
-        <input type="number" id="noise-depol" step="0.001" min="0" max="1" placeholder="0–1">
-    </label>
-    <br><br>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 600; min-width: 50px;">|00⟩:</span>
+                                    <input type="text" id="vec-00" placeholder="a00" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                </div>
 
-    <label>
-        Readout Error P(0 | 1):
-        <input type="number" id="noise-ro-01" step="0.001" min="0" max="1" placeholder="0–1">
-    </label>
-    <br><br>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 600; min-width: 50px;">|01⟩:</span>
+                                    <input type="text" id="vec-01" placeholder="a01" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                </div>
 
-    <label>
-        Readout Error P(1 | 0):
-        <input type="number" id="noise-ro-10" step="0.001" min="0" max="1" placeholder="0–1">
-    </label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 600; min-width: 50px;">|10⟩:</span>
+                                    <input type="text" id="vec-10" placeholder="a10" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                </div>
 
-</div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 600; min-width: 50px;">|11⟩:</span>
+                                    <input type="text" id="vec-11" placeholder="a11" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                </div>
+                            </div>
+                        </div>
 
-            </div>
+                        <!-- Panel 2: Full 2-Qubit State -->
+                        <div class="state-panel hidden" id="state-full" style="padding: 1rem; padding-top: 0.5rem;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.75rem;">Full 2-Qubit State:</div>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Qubit 1 -->
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="font-size: 0.8rem; font-weight: 600; color: #666; margin-bottom: 0.25rem;">Qubit 1:</div>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="font-size: 1rem;">$$\alpha:$$</span>
+                                            <input type="text" id="alpha" placeholder="e.g. 0.8" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="font-size: 1rem;">$$\beta:$$</span>
+                                            <input type="text" id="beta" placeholder="e.g. 0.6i" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Qubit 0 -->
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="font-size: 0.8rem; font-weight: 600; color: #666; margin-bottom: 0.25rem;">Qubit 0:</div>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="font-size: 1rem;">$$\gamma:$$</span>
+                                            <input type="text" id="gamma" placeholder="e.g. 0.8" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="font-size: 1rem;">$$\delta:$$</span>
+                                            <input type="text" id="delta" placeholder="e.g. 0.6i" style="flex: 1; padding: 0.3rem; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 3px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="section">
-                <h3 class="section-heading">Simulation Controls</h3>
-                <div class="section-content">
-                    <label>Qubit 0 View Angle (phi): 
-                        <input type="range" id="cam-phi-0" min="0" max="360" value="30">
-                    </label>
-                    <br><br>
-                    <label>Qubit 0 View Angle (theta): 
-                        <input type="range" id="cam-theta-0" min="0" max="180" value="90">
-                    </label>
-                    <br><br>
-                    <label>Qubit 1 View Angle (phi): 
-                        <input type="range" id="cam-phi-1" min="0" max="360" value="30">
-                    </label>
-                    <br><br>
-                    <label>Qubit 1 View Angle (theta): 
-                        <input type="range" id="cam-theta-1" min="0" max="180" value="90">
-                    </label>
+                    </div>
+                    <div style="padding: 1rem; padding-top: 0.5rem;">
+                        <button id="apply-state-btn" class="apply-btn" style="width: 100%;">Apply State</button>
+                    </div>
                 </div>
             </div>
+
+            <!-- Gate Matrix Panel -->
+            <div class="state-panel hidden" id="gate-matrix-panel">
+                <div class="section" id="unitary-matrix-section">
+                    <h3 class="section-heading">4×4 UNITARY QUANTUM GATE</h3>
+
+                    <div class="section-content" style="padding: 0; position: relative;">
+                        <div class="display-tabs-container" style="position: absolute; top: 0; left: 0; z-index: 10;">
+                            <button id="display-symbols" class="display-tab active" data-mode="symbols">Symbols</button>
+                            <button id="display-values" class="display-tab" data-mode="values">Values</button>
+                        </div>
+
+                        <div id="latex-display" class="latex-display-area" style="width: 100%; margin: 0; margin-bottom: -0.5rem;">
+                            <!-- LaTeX-rendered matrix will appear here -->
+                        </div>
+
+                        <div style="padding: 1rem; padding-top: 0.5rem;">
+                            <div id="gate-buttons">
+                                <button id="gate-cnot01" type="button">CNOT01 (Qubit 0 Control)</button>
+                                <button id="gate-cnot10" type="button">CNOT10 (Qubit 1 Control)</button>
+                                <button id="gate-cz" type="button">CZ</button>
+                                <button id="gate-iswap" type="button">iSWAP</button>
+                                <button id="gate-h-tensor-i" type="button">H ⊗ I</button>
+                                <button id="gate-i-tensor-h" type="button">I ⊗ H</button>
+                                <button id="gate-x-tensor-i" type="button">X ⊗ I</button>
+                                <button id="gate-i-tensor-x" type="button">I ⊗ X</button>
+                                <button id="gate-y-tensor-i" type="button">Y ⊗ I</button>
+                                <button id="gate-i-tensor-y" type="button">I ⊗ Y</button>
+                                <button id="gate-z-tensor-i" type="button">Z ⊗ I</button>
+                                <button id="gate-i-tensor-z" type="button">I ⊗ Z</button>
+                            </div>
+
+                            <div class="matrix-title">Custom 4×4 Unitary</div>
+                        <div class="matrix-container">
+                            <div class="matrix-bracket">⎡<br>⎢<br>⎢<br>⎣</div>
+                            <div id="custom-matrix" class="matrix-grid">
+                <!-- Row 0 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="3"></div>
+
+                <!-- Row 1 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="3"></div>
+
+                <!-- Row 2 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="3"></div>
+
+                <!-- Row 3 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="3"></div>
+            </div>
+            <div class="matrix-bracket">⎤<br>⎥<br>⎥<br>⎦</div>
+        </div>
+
+                        <div id="matrix-error" style="margin-top: 1rem; font-size: 0.85rem; color: #d32f2f; font-weight: 600; display: none;">
+                            Invalid Expression
+                        </div>
+
+
+                        <button id="gate-decompose" class="apply-btn" style="margin-top: 1rem; width: 100%;">
+                            Decompose
+                        </button>
+                        </div><!-- Close padding div -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Panel -->
+            <div class="state-panel hidden" id="operations-panel-left">
+                <div class="section">
+                    <h3 class="section-heading">PHYSICAL OPERATIONS</h3>
+                    <div id="operations-list" class="section-content" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <!-- Physical instructions will be displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden sliders for Bloch sphere controls (used by JavaScript) -->
+            <!-- Initial values: phi = -π/8 = 112.5°, theta = π/2.4 = 75° -->
+            <input type="range" id="cam-phi-0" min="0" max="360" value="112.5" style="display: none;">
+            <input type="range" id="cam-theta-0" min="0" max="180" value="75" style="display: none;">
+            <input type="range" id="cam-phi-1" min="0" max="360" value="112.5" style="display: none;">
+            <input type="range" id="cam-theta-1" min="0" max="180" value="75" style="display: none;">
+
+            <!-- Gate Matrix Panel -->
+            <div class="state-panel hidden" id="gate-matrix-panel">
+                <div class="section" id="unitary-matrix-section">
+                    <h3 class="section-heading">4×4 UNITARY QUANTUM GATE</h3>
+
+                    <div class="section-content" style="padding: 0; position: relative;">
+                        <div class="display-tabs-container" style="position: absolute; top: 0; left: 0; z-index: 10;">
+                            <button id="display-symbols" class="display-tab active" data-mode="symbols">Symbols</button>
+                            <button id="display-values" class="display-tab" data-mode="values">Values</button>
+                        </div>
+
+                        <div id="latex-display" class="latex-display-area" style="width: 100%; margin: 0; margin-bottom: -0.5rem;">
+                            <!-- LaTeX-rendered matrix will appear here -->
+                        </div>
+
+                        <div style="padding: 1rem; padding-top: 0.5rem;">
+                            <div id="gate-buttons">
+                                <button id="gate-cnot01" type="button">CNOT01 (Qubit 0 Control)</button>
+                                <button id="gate-cnot10" type="button">CNOT10 (Qubit 1 Control)</button>
+                                <button id="gate-cz" type="button">CZ</button>
+                                <button id="gate-iswap" type="button">iSWAP</button>
+                                <button id="gate-h-tensor-i" type="button">H ⊗ I</button>
+                                <button id="gate-i-tensor-h" type="button">I ⊗ H</button>
+                                <button id="gate-x-tensor-i" type="button">X ⊗ I</button>
+                                <button id="gate-i-tensor-x" type="button">I ⊗ X</button>
+                                <button id="gate-y-tensor-i" type="button">Y ⊗ I</button>
+                                <button id="gate-i-tensor-y" type="button">I ⊗ Y</button>
+                                <button id="gate-z-tensor-i" type="button">Z ⊗ I</button>
+                                <button id="gate-i-tensor-z" type="button">I ⊗ Z</button>
+                            </div>
+
+                            <div class="matrix-title">Custom 4×4 Unitary</div>
+                        <div class="matrix-container">
+                            <div class="matrix-bracket">⎡<br>⎢<br>⎢<br>⎣</div>
+                            <div id="custom-matrix" class="matrix-grid">
+                <!-- Row 0 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="0" data-col="3"></div>
+
+                <!-- Row 1 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="1" data-col="3"></div>
+
+                <!-- Row 2 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="2" data-col="3"></div>
+
+                <!-- Row 3 -->
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="0"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="1"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="2"></div>
+                <div class="matrix-cell"><input type="text" value="0+0i" data-row="3" data-col="3"></div>
+            </div>
+            <div class="matrix-bracket">⎤<br>⎥<br>⎥<br>⎦</div>
+        </div>
+
+                        <div id="matrix-error" style="margin-top: 1rem; font-size: 0.85rem; color: #d32f2f; font-weight: 600; display: none;">
+                            Invalid Expression
+                        </div>
+
+
+                        <button id="gate-decompose" class="apply-btn" style="margin-top: 1rem; width: 100%;">
+                            Decompose
+                        </button>
+                        </div><!-- Close padding div -->
+                    </div>
+                </div>
+            </div>
+
         </section>
 
         <!-- Center Panel: Bloch Sphere -->
         <section class="panel" id="bloch-sphere-panel">
-            <!-- ===== Probability Bars ABOVE the Qubit 0 title ===== -->
-<div id="probability-bars">
-    <div id="prob-title">Probabilities</div>
+            <h2 style="text-align: center; margin-bottom: 0.5rem; padding-bottom: 0.5rem; color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #3498db;">Quantum State Visualization</h2>
 
-    <div id="prob-bars-row">
+            <div id="bloch-container" style="display: flex; gap: 1.5rem; width: 100%; height: 100%; align-items: stretch; overflow: hidden;">
 
-        <div class="prob-bar-container">
-            <div class="prob-bar" id="prob-00"></div>
-            <div class="prob-label">|00⟩</div>
-        </div>
+                <!-- Left: Quantum State & Probabilities -->
+                <div id="probability-section" style="flex: 1; display: flex; flex-direction: column; gap: 1rem; min-width: 0;">
 
-        <div class="prob-bar-container">
-            <div class="prob-bar" id="prob-01"></div>
-            <div class="prob-label">|01⟩</div>
-        </div>
+                    <!-- Quantum State Display -->
+                    <div style="background: #3498db; padding: 0.2rem 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div style="font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.95); margin-bottom: 0.05rem; letter-spacing: 0.5px;">STATE VECTOR</div>
+                        <div id="quantum-state-display" style="font-size: 0.9rem; color: white; text-align: center; line-height: 1.0;">
+                            $$|\psi\rangle = c_1|00\rangle + c_2|01\rangle + c_3|10\rangle + c_4|11\rangle$$
+                        </div>
+                    </div>
 
-        <div class="prob-bar-container">
-            <div class="prob-bar" id="prob-10"></div>
-            <div class="prob-label">|10⟩</div>
-        </div>
+                    <!-- Coefficient Values & Probabilities (Side by Side) -->
+                    <div style="display: flex; gap: 1rem; background: #f8f9fa; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
 
-        <div class="prob-bar-container">
-            <div class="prob-bar" id="prob-11"></div>
-            <div class="prob-label">|11⟩</div>
-        </div>
+                        <!-- Coefficient Values -->
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.5rem; letter-spacing: 0.5px; text-align: center;">COEFFICIENT VALUES</div>
 
-    </div>
-</div>
+                            <!-- 2x2 Grid with side labels -->
+                            <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                                <!-- Left labels -->
+                                <div style="display: flex; flex-direction: column; justify-content: space-around; height: 160px; font-size: 0.75rem; font-weight: 600; color: #555;">
+                                    <div>|00⟩</div>
+                                    <div>|10⟩</div>
+                                </div>
 
-<!-- ===== NOW the Qubit 0 Title ===== -->
-<h2>Bloch Spheres</h2>
+                                <!-- Grid -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; justify-items: center; align-items: center;">
+                                    <!-- |00⟩ top-left -->
+                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                        <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
+                                        <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
+                                        <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
+                                        <line id="vec-00-line" x1="40" y1="40" x2="40" y2="40" stroke="#3498db" stroke-width="2"/>
+                                        <circle id="vec-00-pt" cx="40" cy="40" r="2.5" fill="#3498db"/>
+                                    </svg>
 
-<div style="display: flex; gap: 1rem; width: 100%; height: 450px;">
+                                    <!-- |01⟩ top-right -->
+                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                        <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
+                                        <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
+                                        <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
+                                        <line id="vec-01-line" x1="40" y1="40" x2="40" y2="40" stroke="#3498db" stroke-width="2"/>
+                                        <circle id="vec-01-pt" cx="40" cy="40" r="2.5" fill="#3498db"/>
+                                    </svg>
 
-    <div style="flex: 1; display: flex; flex-direction: column;">
-        <h3 style="text-align: center;">Qubit 0</h3>
-        <div class="bloch-sphere-canvas" id="bloch-sphere-0">
-            <span>Bloch Sphere Canvas Area</span>
-        </div>
-    </div>
+                                    <!-- |10⟩ bottom-left -->
+                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                        <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
+                                        <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
+                                        <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
+                                        <line id="vec-10-line" x1="40" y1="40" x2="40" y2="40" stroke="#3498db" stroke-width="2"/>
+                                        <circle id="vec-10-pt" cx="40" cy="40" r="2.5" fill="#3498db"/>
+                                    </svg>
 
-    <div style="flex: 1; display: flex; flex-direction: column;">
-        <h3 style="text-align: center;">Qubit 1</h3>
-        <div class="bloch-sphere-canvas" id="bloch-sphere-1">
-            <span>Bloch Sphere Canvas Area</span>
-        </div>
-    </div>
+                                    <!-- |11⟩ bottom-right -->
+                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                        <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
+                                        <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
+                                        <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
+                                        <line id="vec-11-line" x1="40" y1="40" x2="40" y2="40" stroke="#3498db" stroke-width="2"/>
+                                        <circle id="vec-11-pt" cx="40" cy="40" r="2.5" fill="#3498db"/>
+                                    </svg>
+                                </div>
 
-</div>
+                                <!-- Right labels -->
+                                <div style="display: flex; flex-direction: column; justify-content: space-around; height: 160px; font-size: 0.75rem; font-weight: 600; color: #555;">
+                                    <div>|01⟩</div>
+                                    <div>|11⟩</div>
+                                </div>
+                            </div>
+                        </div>
 
-        </section>
+                        <!-- Measurement Probabilities -->
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.5rem; letter-spacing: 0.5px;">MEASUREMENT PROBABILITIES</div>
 
-        <!-- Right Panel: Details -->
-        <section class="panel" id="details-panel">
-            <h2>Details</h2>
-            
-            <div class="section">
-                <h3 class="section-heading">State Info</h3>
-                <div class="section-content" id="state-info">
+                            <div style="display: flex; flex-direction: column; gap: 0.6rem; justify-content: center; min-height: 160px;">
+                                <div class="prob-bar-horizontal">
+                                    <div class="prob-label-left">|00⟩: |c₁|²</div>
+                                    <div class="prob-bar-bg">
+                                        <div class="prob-bar-fill" id="prob-00"></div>
+                                    </div>
+                                </div>
 
-    <!-- Tabs -->
-    <div id="state-tabs">
-    <button class="state-tab active" data-target="state-vector">Complex Vector</button>
-    <button class="state-tab" data-target="state-full">Full 2-Qubit State</button>
-</div>
+                                <div class="prob-bar-horizontal">
+                                    <div class="prob-label-left">|01⟩: |c₂|²</div>
+                                    <div class="prob-bar-bg">
+                                        <div class="prob-bar-fill" id="prob-01"></div>
+                                    </div>
+                                </div>
 
-    <!-- Panel 1: Complex State Vector -->
-<div class="state-panel" id="state-vector">
-    <label>State Vector (4 complex amplitudes):</label>
-    <br><br>
+                                <div class="prob-bar-horizontal">
+                                    <div class="prob-label-left">|10⟩: |c₃|²</div>
+                                    <div class="prob-bar-bg">
+                                        <div class="prob-bar-fill" id="prob-10"></div>
+                                    </div>
+                                </div>
 
-    <div class="vector-col">
-        <div class="vc-row">
-            <span>|00⟩:</span>
-            <input type="text" id="vec-00" placeholder="a00">
-        </div>
+                                <div class="prob-bar-horizontal">
+                                    <div class="prob-label-left">|11⟩: |c₄|²</div>
+                                    <div class="prob-bar-bg">
+                                        <div class="prob-bar-fill" id="prob-11"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        <div class="vc-row">
-            <span>|01⟩:</span>
-            <input type="text" id="vec-01" placeholder="a01">
-        </div>
+                    </div>
 
-        <div class="vc-row">
-            <span>|10⟩:</span>
-            <input type="text" id="vec-10" placeholder="a10">
-        </div>
+                    <!-- Physical Implementation -->
+                    <div style="flex: 1; background: #f8f9fa; padding: 0.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-height: 0;">
+                        <div id="physical-implementation-title" style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.3rem; letter-spacing: 0.5px;">PHYSICAL IMPLEMENTATION</div>
+                        <div style="flex: 1; display: flex; flex-direction: row; gap: 1rem; min-height: 0;">
+                            <!-- Controls on the left -->
+                            <div style="display: flex; flex-direction: column; gap: 0.4rem; min-width: 200px; padding: 0.5rem;">
+                                <!-- Q1 Drive Freq -->
+                                <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                                    <label style="font-size: 0.75rem; font-weight: 600; color: #495057;">Q1 Drive Freq:</label>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="font-size: 0.9rem;">$$\omega_{D,1}$$</div>
+                                        <input type="text" id="q1-drive-freq" readonly style="flex: 1; padding: 0.2rem; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;" value="5.0 GHz">
+                                    </div>
+                                </div>
+                                
+                                <!-- Q0 Drive Freq -->
+                                <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                                    <label style="font-size: 0.75rem; font-weight: 600; color: #495057;">Q0 Drive Freq:</label>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="font-size: 0.9rem;">$$\omega_{D,0}$$</div>
+                                        <input type="text" id="q0-drive-freq" readonly style="flex: 1; padding: 0.2rem; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;" value="5.3 GHz">
+                                    </div>
+                                </div>
+                                
+                                <!-- Rabi Freq -->
+                                <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                                    <label style="font-size: 0.75rem; font-weight: 600; color: #495057;">Rabi Freq:</label>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="font-size: 0.9rem;">$$\omega$$</div>
+                                        <input type="text" id="rabi-freq" readonly style="flex: 1; padding: 0.2rem; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;" value="20.0 MHz">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Image on the right -->
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px; border: 1px solid #ddd; overflow: auto; padding: 0.3rem; min-height: 0; max-height: 60vh;">
+                                <img id="physical-implementation-image" src="assets/animations/default.png" alt="Physical Implementation" style="max-width: 98%; max-height: 98%; object-fit: contain; display: block;">
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="vc-row">
-            <span>|11⟩:</span>
-            <input type="text" id="vec-11" placeholder="a11">
-        </div>
-    </div>
-</div>
-                    
-<!-- Panel 2: Full 2-Qubit State -->
-<div class="state-panel hidden" id="state-full">
-    <label>Full 2-Qubit State (α, β):</label>
-    <br><br>
+                </div>
 
-    <input type="text" id="alpha" placeholder="α (e.g. 0.8)">
-    <input type="text" id="beta"  placeholder="β (e.g. 0.6i)">
-</div>
+                <!-- Right: Stacked Bloch Spheres -->
+                <div id="bloch-spheres-stack" style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 1rem; justify-content: flex-start; align-items: flex-start; overflow-y: auto; padding: 0;">
 
-</div>
-<br><br>
-<button id="apply-state-btn" class="apply-btn">Apply State</button>
+                    <!-- Qubit 1 -->
+                    <div style="width: fit-content; border: 2px solid #e0e0e0; border-radius: 8px; padding: 0.75rem; background: #fafafa;">
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #2c3e50; margin-bottom: 0.5rem;">QUBIT 1</div>
+
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                            <!-- Bloch Sphere -->
+                            <div style="border: 2px solid #ddd; border-radius: 4px; background: white; position: relative;">
+                                <div class="bloch-sphere-canvas" id="bloch-sphere-1" style="width: 240px; height: 240px;">
+                                </div>
+                                <!-- Arrow Controls -->
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
+                                    <!-- Up/Down arrows stacked vertically in bottom left -->
+                                    <div style="position: absolute; bottom: 5px; left: 5px; display: flex; flex-direction: column; gap: 2px; pointer-events: all;">
+                                        <button class="bloch-arrow-btn" data-qubit="1" data-direction="up" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">↑</button>
+                                        <button class="bloch-arrow-btn" data-qubit="1" data-direction="down" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">↓</button>
+                                    </div>
+                                    <!-- Left/Right arrows stacked horizontally in bottom right -->
+                                    <div style="position: absolute; bottom: 5px; right: 5px; display: flex; flex-direction: row; gap: 2px; pointer-events: all;">
+                                        <button class="bloch-arrow-btn" data-qubit="1" data-direction="left" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">←</button>
+                                        <button class="bloch-arrow-btn" data-qubit="1" data-direction="right" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">→</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem;">|ψ₁⟩ = α|0⟩ + β|1⟩</div>
+                                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                    <label style="font-size: 0.75rem; min-width: 20px;">α:</label>
+                                    <input type="text" id="alpha-1" readonly placeholder="1" style="width: 80px; padding: 0.2rem 0.3rem; font-size: 0.7rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;">
+                                </div>
+                                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                    <label style="font-size: 0.75rem; min-width: 20px;">β:</label>
+                                    <input type="text" id="beta-1" readonly placeholder="0" style="width: 80px; padding: 0.2rem 0.3rem; font-size: 0.7rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;">
+                                </div>
+                                <button class="apply-btn" id="measure-btn-1" style="width: 80px; padding: 0.25rem; font-size: 0.7rem; margin-top: 0.25rem; margin-left: 24px;">Measure</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qubit 0 -->
+                    <div style="width: fit-content; border: 2px solid #e0e0e0; border-radius: 8px; padding: 0.75rem; background: #fafafa;">
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #2c3e50; margin-bottom: 0.5rem;">QUBIT 0</div>
+
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                            <!-- Bloch Sphere -->
+                            <div style="border: 2px solid #ddd; border-radius: 4px; background: white; position: relative;">
+                                <div class="bloch-sphere-canvas" id="bloch-sphere-0" style="width: 240px; height: 240px;">
+                                </div>
+                                <!-- Arrow Controls -->
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
+                                    <!-- Up/Down arrows stacked vertically in bottom left -->
+                                    <div style="position: absolute; bottom: 5px; left: 5px; display: flex; flex-direction: column; gap: 2px; pointer-events: all;">
+                                        <button class="bloch-arrow-btn" data-qubit="0" data-direction="up" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">↑</button>
+                                        <button class="bloch-arrow-btn" data-qubit="0" data-direction="down" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">↓</button>
+                                    </div>
+                                    <!-- Left/Right arrows stacked horizontally in bottom right -->
+                                    <div style="position: absolute; bottom: 5px; right: 5px; display: flex; flex-direction: row; gap: 2px; pointer-events: all;">
+                                        <button class="bloch-arrow-btn" data-qubit="0" data-direction="left" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">←</button>
+                                        <button class="bloch-arrow-btn" data-qubit="0" data-direction="right" style="background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 3px; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">→</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem;">|ψ₀⟩ = γ|0⟩ + δ|1⟩</div>
+                                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                    <label style="font-size: 0.75rem; min-width: 20px;">γ:</label>
+                                    <input type="text" id="gamma-0" readonly placeholder="1" style="width: 80px; padding: 0.2rem 0.3rem; font-size: 0.7rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;">
+                                </div>
+                                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                    <label style="font-size: 0.75rem; min-width: 20px;">δ:</label>
+                                    <input type="text" id="delta-0" readonly placeholder="0" style="width: 80px; padding: 0.2rem 0.3rem; font-size: 0.7rem; border: 1px solid #ccc; border-radius: 3px; background: #f5f5f5;">
+                                </div>
+                                <button class="apply-btn" id="measure-btn-0" style="width: 80px; padding: 0.25rem; font-size: 0.7rem; margin-top: 0.25rem; margin-left: 24px;">Measure</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
-
-<div class="section" id="unitary-matrix-section">
-    <h3 class="section-heading">Gate Matrix</h3>
-
-    <div class="section-content">
-        <div id="gate-buttons">
-            <button id="gate-cnot" type="button">CNOT</button>
-            <button id="gate-cz" type="button">CZ</button>
-        </div>
-
-        <div class="matrix-title">Custom</div>
-        <div id="custom-matrix" class="matrix-grid"></div>
-    </div>
-</div>
-
-<!-- ↓ Button goes here, below the whole matrix section ↓ -->
-<button id="gate-decompose" class="apply-btn" style="margin-top: 1rem; width: 100%;">
-    Decompose
-</button>
-
-    </div>
-</div>
 
         </section>
 
@@ -607,9 +1234,7 @@
         <h3>By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</h3>
     </footer>
 
-    
-    <script src="blochscript.js" type="module">
-        //Seperate file blochscript.js
-    </script>
+
+    <script src="script.js" type="module"></script>
 </body>
 </html> 

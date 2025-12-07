@@ -195,27 +195,17 @@ function initCustomMatrix() {
 
     if (!matrixContainer || !btnCnot || !btnCz) return;
 
-    const size = 4;
-    const inputs = [];
     let selectedGate = null;
 
-    // Build 4x4 grid
-    for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.maxLength = 1;
-            input.classList.add("matrix-cell");
-            input.value = "0";
+    // Get all existing inputs (already created in HTML)
+    const allInputs = matrixContainer.querySelectorAll('input[type="number"]');
 
-            input.addEventListener("input", () => {
-                clearSelection();
-            });
-
-            matrixContainer.appendChild(input);
-            inputs.push(input);
-        }
-    }
+    // Add listeners to clear selection on manual input
+    allInputs.forEach(input => {
+        input.addEventListener("input", () => {
+            clearSelection();
+        });
+    });
 
     function clearSelection() {
         selectedGate = null;
@@ -223,48 +213,65 @@ function initCustomMatrix() {
         btnCz.classList.remove("selected");
     }
 
-    function setMatrix(values) {
-        for (let i = 0; i < 16; i++) {
-            inputs[i].value = values[i];
+    // Set matrix values (array of complex numbers {re, im})
+    function setMatrix(complexValues) {
+        for (let r = 0; r < 4; r++) {
+            for (let c = 0; c < 4; c++) {
+                const idx = r * 4 + c;
+                const val = complexValues[idx];
+
+                // Set real part
+                const realInput = matrixContainer.querySelector(
+                    `input[data-row="${r}"][data-col="${c}"][data-part="real"]`
+                );
+                // Set imaginary part
+                const imagInput = matrixContainer.querySelector(
+                    `input[data-row="${r}"][data-col="${c}"][data-part="imag"]`
+                );
+
+                if (realInput) realInput.value = val.re;
+                if (imagInput) imagInput.value = val.im;
+            }
         }
     }
 
-    // CNOT button: set to standard 2-qubit CNOT (control qubit 1, target qubit 2)
-// Basis order: |00>, |01>, |10>, |11>
-btnCnot.addEventListener("click", () => {
-    const cnotValues = [
-        "1", "0", "0", "0",
-        "0", "1", "0", "0",
-        "0", "0", "0", "1",
-        "0", "0", "1", "0"
-    ];
-    setMatrix(cnotValues);
-    selectedGate = "CNOT";
-    btnCnot.classList.add("selected");
-    btnCz.classList.remove("selected");
-});
+    // CNOT button: set to standard 2-qubit CNOT
+    // Basis order: |00>, |01>, |10>, |11>
+    btnCnot.addEventListener("click", () => {
+        const cnotValues = [
+            {re: 1, im: 0}, {re: 0, im: 0}, {re: 0, im: 0}, {re: 0, im: 0},
+            {re: 0, im: 0}, {re: 1, im: 0}, {re: 0, im: 0}, {re: 0, im: 0},
+            {re: 0, im: 0}, {re: 0, im: 0}, {re: 0, im: 0}, {re: 1, im: 0},
+            {re: 0, im: 0}, {re: 0, im: 0}, {re: 1, im: 0}, {re: 0, im: 0}
+        ];
+        setMatrix(cnotValues);
+        selectedGate = "CNOT";
+        btnCnot.classList.add("selected");
+        btnCz.classList.remove("selected");
+    });
 
-   // CZ button: set to controlled-Z matrix
-// Basis: |00>, |01>, |10>, |11>
-btnCz.addEventListener("click", () => {
+    // CZ button: set to controlled-Z matrix
+    // Basis: |00>, |01>, |10>, |11>
+    btnCz.addEventListener("click", () => {
+        const czValues = [
+            {re: 1, im: 0}, {re: 0, im: 0}, {re: 0, im: 0}, {re: 0, im: 0},
+            {re: 0, im: 0}, {re: 1, im: 0}, {re: 0, im: 0}, {re: 0, im: 0},
+            {re: 0, im: 0}, {re: 0, im: 0}, {re: 1, im: 0}, {re: 0, im: 0},
+            {re: 0, im: 0}, {re: 0, im: 0}, {re: 0, im: 0}, {re: -1, im: 0}
+        ];
+        setMatrix(czValues);
+        selectedGate = "CZ";
+        btnCz.classList.add("selected");
+        btnCnot.classList.remove("selected");
+    });
+
     // DECOMPOSE button (placeholder)
-const btnDecompose = document.getElementById("gate-decompose");
-btnDecompose.addEventListener("click", () => {
-    alert("Coming soon: matrix → gate decomposition!");
-});
-
-    const czValues = [
-        "1", "0", "0", "0",
-        "0", "1", "0", "0",
-        "0", "0", "1", "0",
-        "0", "0", "0", "-1"
-    ];
-    setMatrix(czValues);
-    selectedGate = "CZ";
-    btnCz.classList.add("selected");
-    btnCnot.classList.remove("selected");
-});
-
+    const btnDecompose = document.getElementById("gate-decompose");
+    if (btnDecompose) {
+        btnDecompose.addEventListener("click", () => {
+            alert("Coming soon: matrix → gate decomposition!");
+        });
+    }
 }
 
 // ----------------------------------------------------
