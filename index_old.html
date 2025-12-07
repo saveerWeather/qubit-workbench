@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qubit Workbench</title>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+     <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        footer {
+            width: 100%;
+            text-align: right;
+            padding-top: 6pt;
+            padding-bottom: 6pt;
+            padding-right: 10pt;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .panel {
+            flex: 0.8;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+            max-width: 100%;
+        }
+
+        .panel h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.75rem;
+            max-width: 100%;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            max-width: 100%;
+        }
+
+        .section-content {
+            min-height: 60px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            padding: 1rem;
+        }
+
+        #bloch-sphere-panel {
+            flex: 2;
+        }
+
+        .bloch-sphere-canvas {
+            flex: 1;
+            min-height: 325px;
+            max-height: 325px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+/* Gate matrix UI in right panel */
+#unitary-matrix-section {
+    margin-top: auto;
+}
+
+#gate-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#gate-buttons button {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid #3498db;
+    background-color: #ffffff;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#gate-buttons button:hover {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+#gate-buttons button.selected {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.matrix-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.matrix-cell {
+    width: 100%;
+    padding: 0.3rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.matrix-cell:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 1px rgba(52, 152, 219, 0.2);
+}
+
+/* ==== State Info Validation Styling ==== */
+
+.input-error {
+    border: 2px solid red !important;
+    background-color: #ffe6e6;
+}
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .panel {
+                min-height: 300px;
+            }
+
+            .bloch-sphere-canvas {
+                min-height: 300px;
+            }
+        }
+
+/* ==== Probability Bars Styling ==== */
+#probability-bars {
+    width: 100%;
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#prob-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+#prob-bars-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    width: 80%;
+}
+
+.prob-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.prob-bar {
+    width: 30px;
+    height: 0px; /* default: zero prob */
+    background-color: #3498db;
+    border-radius: 4px;
+    transition: height 0.3s ease;
+}
+
+.prob-label {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+}
+        /* === Apply State Button Styling === */
+.apply-btn {
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.apply-btn:hover {
+    background-color: #2980b9;
+}
+
+
+        #state-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.state-tab {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #3498db;
+    background: white;
+    color: #3498db;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.state-tab.active {
+    background: #3498db;
+    color: white;
+}
+
+.state-panel {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+<style>
+    /* … your existing styles … */
+
+
+    /* ============================
+       State Vector Input Alignment
+       ============================ */
+    .state-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;  /* wraps properly on small screens */
+    }
+
+    .ket-label {
+        font-weight: 600;
+        min-width: 40px;  /* keeps columns lined up */
+    }
+
+    #state-vector input[type="text"] {
+        width: 120px;     /* consistent input field width */
+    }
+/* ============================
+   State Vector Input Formatting
+   ============================ */
+.vector-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+}
+
+.vg-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vg-cell span {
+    font-weight: 600;
+    min-width: 45px;
+}
+
+.vg-cell input {
+    width: 120px;
+}
+
+</style>
+
+        
+    </style>
+</head>
+<body>
+    <nav class="main-nav" aria-label="Main navigation">
+  <ul>
+    <li><a href="index.html" class="nav-link active" aria-current="page">Simulator</a></li>
+    <li><a href="explain.html" class="nav-link">Explanations</a></li>
+  </ul>
+</nav>
+
+    <header>
+        <h1>Qubit Workbench</h1>
+    </header>
+
+    <main>
+        <!-- Left Panel: Controls -->
+        <section class="panel" id="controls-panel">
+            <h2>Controls</h2>
+            
+            <div class="section">
+                <h3 class="section-heading">Drive Parameters</h3>
+                <div class="section-content" id="drive-params">
+
+    <label>
+        Amplitude &Omega; (MHz):
+        <input type="number" id="drive-amp" step="0.01" placeholder="e.g. 5.0">
+    </label>
+    <br><br>
+
+    <label>
+        Frequency Detuning &Delta; (MHz):
+        <input type="number" id="drive-detune" step="0.01" placeholder="e.g. -2.5">
+    </label>
+    <br><br>
+
+    <label>
+        Phase &phi; (degrees):
+        <input type="number" id="drive-phase" min="0" max="360" step="1" placeholder="0–360">
+    </label>
+    <br><br>
+
+    <label>
+        Pulse Duration t (ns):
+        <input type="number" id="drive-duration" step="0.1" placeholder="e.g. 20">
+    </label>
+    <br><br>
+
+    <label>
+        Pulse Shape:
+        <select id="drive-shape">
+            <option value="gaussian">Gaussian</option>
+            <option value="square">Square</option>
+            <option value="drag">DRAG</option>
+        </select>
+    </label>
+
+</div>
+
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Noise & Decoherence</h3>
+                <div class="section-content" id="noise-params">
+
+    <label>
+        Relaxation Time T<sub>1</sub> (μs):
+        <input type="number" id="noise-T1" step="0.01" placeholder="e.g. 25">
+    </label>
+    <br><br>
+
+    <label>
+        Dephasing Time T<sub>2</sub> (μs):
+        <input type="number" id="noise-T2" step="0.01" placeholder="e.g. 18">
+    </label>
+    <br><br>
+
+    <label>
+        Depolarizing Probability p:
+        <input type="number" id="noise-depol" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+    <br><br>
+
+    <label>
+        Readout Error P(0 | 1):
+        <input type="number" id="noise-ro-01" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+    <br><br>
+
+    <label>
+        Readout Error P(1 | 0):
+        <input type="number" id="noise-ro-10" step="0.001" min="0" max="1" placeholder="0–1">
+    </label>
+
+</div>
+
+            </div>
+
+            <div class="section">
+                <h3 class="section-heading">Simulation Controls</h3>
+                <div class="section-content">
+                    <label>Qubit 0 View Angle (phi): 
+                        <input type="range" id="cam-phi-0" min="0" max="360" value="30">
+                    </label>
+                    <br><br>
+                    <label>Qubit 0 View Angle (theta): 
+                        <input type="range" id="cam-theta-0" min="0" max="180" value="90">
+                    </label>
+                    <br><br>
+                    <label>Qubit 1 View Angle (phi): 
+                        <input type="range" id="cam-phi-1" min="0" max="360" value="30">
+                    </label>
+                    <br><br>
+                    <label>Qubit 1 View Angle (theta): 
+                        <input type="range" id="cam-theta-1" min="0" max="180" value="90">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Center Panel: Bloch Sphere -->
+        <section class="panel" id="bloch-sphere-panel">
+            <!-- ===== Probability Bars ABOVE the Qubit 0 title ===== -->
+<div id="probability-bars">
+    <div id="prob-title">Probabilities</div>
+
+    <div id="prob-bars-row">
+
+        <div class="prob-bar-container">
+            <div class="prob-bar" id="prob-00"></div>
+            <div class="prob-label">|00⟩</div>
+        </div>
+
+        <div class="prob-bar-container">
+            <div class="prob-bar" id="prob-01"></div>
+            <div class="prob-label">|01⟩</div>
+        </div>
+
+        <div class="prob-bar-container">
+            <div class="prob-bar" id="prob-10"></div>
+            <div class="prob-label">|10⟩</div>
+        </div>
+
+        <div class="prob-bar-container">
+            <div class="prob-bar" id="prob-11"></div>
+            <div class="prob-label">|11⟩</div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== NOW the Qubit 0 Title ===== -->
+<h2>Bloch Spheres</h2>
+
+<div style="display: flex; gap: 1rem; width: 100%; height: 450px;">
+
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <h3 style="text-align: center;">Qubit 0</h3>
+        <div class="bloch-sphere-canvas" id="bloch-sphere-0">
+            <span>Bloch Sphere Canvas Area</span>
+        </div>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <h3 style="text-align: center;">Qubit 1</h3>
+        <div class="bloch-sphere-canvas" id="bloch-sphere-1">
+            <span>Bloch Sphere Canvas Area</span>
+        </div>
+    </div>
+
+</div>
+
+        </section>
+
+        <!-- Right Panel: Details -->
+        <section class="panel" id="details-panel">
+            <h2>Details</h2>
+            
+            <div class="section">
+                <h3 class="section-heading">State Info</h3>
+                <div class="section-content" id="state-info">
+
+    <!-- Tabs -->
+    <div id="state-tabs">
+    <button class="state-tab active" data-target="state-vector">Complex Vector</button>
+    <button class="state-tab" data-target="state-full">Full 2-Qubit State</button>
+</div>
+
+    <!-- Panel 1: Complex State Vector -->
+<div class="state-panel" id="state-vector">
+    <label>State Vector (4 complex amplitudes):</label>
+    <br><br>
+
+    <div class="vector-col">
+        <div class="vc-row">
+            <span>|00⟩:</span>
+            <input type="text" id="vec-00" placeholder="a00">
+        </div>
+
+        <div class="vc-row">
+            <span>|01⟩:</span>
+            <input type="text" id="vec-01" placeholder="a01">
+        </div>
+
+        <div class="vc-row">
+            <span>|10⟩:</span>
+            <input type="text" id="vec-10" placeholder="a10">
+        </div>
+
+        <div class="vc-row">
+            <span>|11⟩:</span>
+            <input type="text" id="vec-11" placeholder="a11">
+        </div>
+    </div>
+</div>
+                    
+<!-- Panel 2: Full 2-Qubit State -->
+<div class="state-panel hidden" id="state-full">
+    <label>Full 2-Qubit State (α, β):</label>
+    <br><br>
+
+    <input type="text" id="alpha" placeholder="α (e.g. 0.8)">
+    <input type="text" id="beta"  placeholder="β (e.g. 0.6i)">
+</div>
+
+</div>
+<br><br>
+<button id="apply-state-btn" class="apply-btn">Apply State</button>
+
+            </div>
+
+<div class="section" id="unitary-matrix-section">
+    <h3 class="section-heading">Gate Matrix</h3>
+
+    <div class="section-content">
+        <div id="gate-buttons">
+            <button id="gate-cnot" type="button">CNOT</button>
+            <button id="gate-cz" type="button">CZ</button>
+        </div>
+
+        <div class="matrix-title">Custom</div>
+        <div id="custom-matrix" class="matrix-grid"></div>
+    </div>
+</div>
+
+<!-- ↓ Button goes here, below the whole matrix section ↓ -->
+<button id="gate-decompose" class="apply-btn" style="margin-top: 1rem; width: 100%;">
+    Decompose
+</button>
+
+    </div>
+</div>
+
+        </section>
+
+    </main>
+ 
+    <footer>
+        <h3>By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</h3>
+    </footer>
+
+    
+    <script src="blochscript.js" type="module">
+        //Seperate file blochscript.js
+    </script>
+</body>
+</html> 
