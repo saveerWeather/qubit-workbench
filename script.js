@@ -1382,7 +1382,7 @@ function initApplyState() {
         }
         
         try {
-            const response = await fetch('http://localhost:5001/decompose_state', {
+            const response = await fetch('/decompose_state', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1442,7 +1442,7 @@ async function measureQubit(qubitIndex) {
             return;
         }
         
-        const response = await fetch('http://localhost:5001/measure_qubit', {
+        const response = await fetch('/measure_qubit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1827,7 +1827,7 @@ async function executeInstruction(instruction, instructionIndex) {
             return;
         }
         
-        const response = await fetch('http://localhost:5001/apply_gate', {
+        const response = await fetch('/apply_gate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
