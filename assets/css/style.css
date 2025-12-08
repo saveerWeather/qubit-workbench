@@ -1,153 +1,1428 @@
-/* ========================= */
-/* Global Styles */
-/* ========================= */
-body {
-  font-family: system-ui, -apple-system, Roboto, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.55;
-  color: #333;
-  background-color: #fafafa;
-  margin: 0;
-  padding: 0;
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        header .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        header .main-nav {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            padding: 0 !important;
+        }
+        
+        header .main-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            background-color: transparent !important;
+        }
+
+        header .main-nav a:hover {
+            color: white;
+        }
+
+        header .main-nav a.active {
+            color: white;
+            font-weight: 600;
+            border-bottom: 2px solid white;
+            padding-bottom: 2px;
+            background-color: transparent !important;
+        }
+        
+        header .main-nav a {
+            background-color: transparent !important;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            gap: 1rem;
+            padding: 1rem;
+            min-height: 0;
+            min-width: 0;
+        }
+
+        footer {
+            width: 100%;
+            text-align: right;
+            padding-top: 3pt;
+            padding-bottom: 3pt;
+            padding-right: 10pt;
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        footer h3 {
+            font-size: 0.7rem;
+            margin: 0;
+        }
+
+        .panel {
+            flex: 1;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 0;
+            position: relative;
+        }
+
+        #controls-panel {
+            flex: 0.7;
+        }
+
+        .resize-handle {
+            position: absolute;
+            right: -5px;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            cursor: col-resize;
+            z-index: 100;
+            background: transparent;
+        }
+
+        .resize-handle.left {
+            right: auto;
+            left: -5px;
+        }
+
+        .resize-handle:hover {
+            background: rgba(52, 152, 219, 0.3);
+        }
+
+        .resize-handle:active {
+            background: rgba(52, 152, 219, 0.5);
+        }
+
+
+        .panel h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+            max-width: 100%;
+        }
+
+        .panel h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.75rem;
+            max-width: 100%;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            max-width: 100%;
+        }
+
+        .section-content {
+            min-height: 60px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            padding: 1rem;
+            overflow: hidden; /* prevent overflow */
+            width: 100%; /* and this for overflow */
+        }
+
+        #bloch-sphere-panel {
+            flex: 2;
+            min-width: 0;
+            overflow-y: auto;   /* Now scrollable vertically */
+            overflow-x: hidden; /* No horizontal scroll */
+            padding: 1rem;
+            scroll-behavior: smooth;
+        }
+
+        #bloch-sphere-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #bloch-sphere-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #bloch-sphere-panel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        #bloch-sphere-panel::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        #controls-panel {
+            min-width: 0;
+        }
+
+        .bloch-sphere-canvas {
+            width: 280px;
+            height: 280px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+/* Gate matrix UI in right panel */
+#unitary-matrix-section {
+    margin-top: auto;
 }
 
-a {
-  text-decoration: none;
-  color: #0d47a1;
+#gate-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
-a:hover {
-  text-decoration: underline;
+#gate-buttons button {
+    padding: 0.4rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid #3498db;
+    background-color: #ffffff;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-/* ========================= */
-/* Navigation */
-/* ========================= */
-.main-nav {
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px solid #eee;
-  padding: 10px 0;
-  background-color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+#gate-buttons button:hover {
+    background-color: #3498db;
+    color: #ffffff;
 }
 
-.main-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-  margin: 0;
-  padding: 0;
+#gate-buttons button.selected {
+    background-color: #3498db;
+    color: #ffffff;
 }
 
-.main-nav a {
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-weight: 500;
+.matrix-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
-.main-nav a.active {
-  background-color: #e7f0ff;
-  color: #0d47a1;
-  font-weight: 600;
+.matrix-container {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0.25rem auto 0;
+    width: fit-content;
+    max-width: 100%;
 }
 
-/* ========================= */
-/* Table of Contents */
-/* ========================= */
-.toc {
-  text-align: center;
-  margin: 15px 0;
+.matrix-bracket {
+    font-size: 3rem;
+    line-height: 0.75;
+    color: #333;
+    user-select: none;
 }
 
-.toc ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    padding: 0.25rem;
 }
 
-.toc a {
-  color: #0d47a1;
+.matrix-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
 }
 
-.toc a:hover {
-  text-decoration: underline;
+.matrix-cell input {
+    width: 48px;
+    padding: 0.15rem 0.15rem;
+    text-align: center;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    box-sizing: border-box;
+    line-height: 1.2;
 }
 
-/* ========================= */
-/* Page Header */
-/* ========================= */
-.page-header {
-  text-align: center;
-  padding: 20px 10px;
+.matrix-cell input:focus {
+    background-color: #e3f2fd;
+    outline: 1px solid #3498db;
 }
 
-/* ========================= */
-/* Sections */
-/* ========================= */
-main#content {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+/* Remove number input spinner arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.explain-section {
-  padding: 30px 0;
-  border-bottom: 1px solid #eee;
+/*input[type="number"] {
+    -moz-appearance: textfield;
+}*/
+
+/* ===== Main Tabs Styling ===== */
+.main-tabs-container {
+    display: flex;
+    gap: 0;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    border-bottom: 2px solid #e0e0e0;
 }
 
-.explain-section h2 {
-  font-size: 1.8rem;
-  color: #0d47a1;
-  margin-top: 0;
+.main-tab {
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-right: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    text-align: center;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
 }
 
-.explain-section h3 {
-  font-size: 1.3rem;
-  color: #1a237e;
+.main-tab:last-child {
+    border-right: none;
 }
 
-/* Smooth scrolling anchor offset */
-.explain-section::before {
-  content: "";
-  display: block;
-  height: 80px; /* match nav height */
-  margin-top: -80px;
-  visibility: hidden;
+.main-tab:hover {
+    background-color: #e8e8e8;
 }
 
-/* ========================= */
-/* Notes & Code Blocks */
-/* ========================= */
-.note {
-  background-color: #e3f2fd;
-  padding: 10px 15px;
-  border-left: 4px solid #0d47a1;
-  margin: 15px 0;
+.main-tab.active {
+    background-color: white;
+    color: #2c3e50;
+    border-bottom: 2px solid white;
+    margin-bottom: -2px;
 }
 
-.code {
-  background-color: #f6f8fa;
-  font-family: monospace;
-  padding: 8px;
-  border-radius: 4px;
-  display: block;
-  margin: 10px 0;
+/* ===== Display Mode Tabs (Symbols/Values) ===== */
+.display-tabs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
-/* ========================= */
-/* Footer */
-/* ========================= */
-.page-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 0.9rem;
-  color: #666;
-  border-top: 1px solid #eee;
+.display-tab {
+    padding: 0.6rem 0.8rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    text-align: center;
+    min-width: 80px;
+}
+
+.display-tab:last-child {
+    border-bottom: none;
+}
+
+.display-tab:hover {
+    background-color: #e8e8e8;
+}
+
+.display-tab.active {
+    background-color: #fafafa;
+    color: #2c3e50;
+    font-weight: 600;
+    border-right: 3px solid #3498db;
+}
+
+.latex-display-area {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #fafafa;
+    border-radius: 4px;
+    text-align: center;
+    min-height: 80px;
+}
+
+/* ==== State Info Validation Styling ==== */
+
+.input-error {
+    border: 2px solid red !important;
+    background-color: #ffe6e6;
+}
+        
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .matrix-cell input {
+                width: 43px;
+                font-size: 0.6rem;
+                padding: 0.12rem;
+            }
+
+            .section-content {
+                padding: 0.75rem;
+            }
+
+            .latex-display-area {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            #gate-buttons button {
+                font-size: 0.8rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2.8rem;
+            }
+
+            .matrix-grid {
+                gap: 0.4rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            main {
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+
+            .panel {
+                flex: 1;
+                min-width: 280px;
+            }
+
+            .matrix-cell input {
+                width: 40px;
+                font-size: 0.55rem;
+                padding: 0.1rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2.5rem;
+            }
+
+            .matrix-grid {
+                gap: 0.3rem;
+            }
+
+            #gate-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            #gate-buttons button {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.4rem;
+            }
+
+            .matrix-title {
+                font-size: 0.75rem;
+            }
+
+            .panel h2 {
+                font-size: 1.1rem;
+            }
+
+            .section-heading {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .panel {
+                min-height: 300px;
+            }
+
+            .bloch-sphere-canvas {
+                min-height: 300px;
+            }
+
+            .matrix-cell input {
+                width: 32px;
+                font-size: 0.5rem;
+                padding: 0.08rem;
+            }
+
+            .matrix-bracket {
+                font-size: 2rem;
+            }
+
+            .matrix-grid {
+                gap: 0.25rem;
+            }
+
+            #matrix-error {
+                font-size: 0.75rem;
+            }
+
+            .panel h2 {
+                font-size: 1rem;
+            }
+        }
+
+/* ==== Horizontal Probability Bars Styling ==== */
+.prob-bar-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.prob-label-left {
+    font-size: 0.9rem;
+    font-weight: 500;
+    width: auto;
+    flex-shrink: 0;
+    color: #495057;
+    font-family: 'Times New Roman', serif;
+    white-space: nowrap;
+}
+
+.prob-bar-bg {
+    width: 170px;
+    flex-shrink: 0;
+    height: 26px;
+    background-color: #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.prob-bar-fill {
+    height: 100%;
+    width: 0%; /* default: zero prob */
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+    position: relative;
+}
+
+.prob-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+}
+        /* === Apply State Button Styling === */
+.apply-btn {
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.apply-btn:hover {
+    background-color: #2980b9;
+}
+
+
+#state-tabs {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.state-tab {
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-right: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    text-align: center;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.state-tab:last-child {
+    border-right: none;
+}
+
+.state-tab:hover {
+    background-color: #e8e8e8;
+}
+
+.state-tab.active {
+    background-color: white;
+    color: #2c3e50;
+    border-bottom: 2px solid white;
+    margin-bottom: -2px;
+}
+
+
+#state-info {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%; /* Ensure it respects container width */
+}
+
+/* Ensure all children respect width constraints */
+#state-info .state-panel {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Prevent input fields from causing overflow */
+#state-info input[type="text"] {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Constrain vector grid */
+#state-info .vector-grid {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Make individual cells responsive */
+#state-info .vg-cell {
+    min-width: 0; /* Allow shrinking */
+    flex-wrap: nowrap;
+}
+
+#state-info .vg-cell input {
+    width: 100%;
+    max-width: 120px;
+    min-width: 80px;
+}
+
+#quantum-state-display {
+    font-size: clamp(0.65rem, 2vw, 0.9rem) !important;
+    color: white;
+    text-align: center;
+    line-height: 1.0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    word-break: break-word;
+    padding: 0.25rem 0;
+}
+
+/* MathJax-specific fixes */
+#quantum-state-display .MathJax {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+#quantum-state-display .MathJax_Display {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+/* Parent container */
+#quantum-state-display-container {
+    background: #3498db;
+    padding: 0.2rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: fit-content;
+}
+
+/* Style state info scrollbar */
+#state-info::-webkit-scrollbar {
+    width: 6px;
+}
+
+#state-info::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#state-info::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 3px;
+}
+
+#state-info::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* Ensure inner panels respect scrolling */
+.state-panel {
+    display: block;
+    min-height: min-content;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Parent container - allows wrapping */
+#coefficient-probability-container {
+    display: flex;
+    /*gap: 3rem; */
+    background: #f8f9fa;
+    padding: 1rem;
+    /*padding-top: 3rem;*/
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+/* Both sections - equal flex, with minimum widths */
+#coefficient-values-section,
+#measurement-probabilities-section {
+    flex: 1 1 300px; /* Grow, shrink, min-width 300px */
+    display: flex;
+    flex-direction: column;
+    /*min-width: 300px; Wrap when less than this */
+}
+
+
+
+
+/* Bloch sphere arrow controls */
+.bloch-arrow-btn {
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.bloch-arrow-btn:hover {
+    background: rgba(52, 152, 219, 0.9) !important;
+    color: white;
+    transform: scale(1.1) !important;
+}
+
+.bloch-arrow-btn:active {
+    transform: scale(0.95) !important;
+}
+
+
+    /* ============================
+       State Vector Input Alignment
+       ============================ */
+    .state-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;  /* wraps properly on small screens */
+    }
+
+    .ket-label {
+        font-weight: 600;
+        min-width: 40px;  /* keeps columns lined up */
+    }
+
+    #state-vector input[type="text"] {
+        width: 120px;     /* consistent input field width */
+    }
+/* ============================
+   State Vector Input Formatting
+   ============================ */
+.vector-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+}
+
+.vg-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vg-cell span {
+    font-weight: 600;
+    min-width: 45px;
+}
+
+.vg-cell input {
+    width: 120px;
+}
+
+
+/* ===== Enhanced Responsive Design ===== */
+
+/* Large Desktops (1400px+) - Your current design works great here */
+
+/* Medium Desktops (1200px - 1400px) */
+@media (max-width: 1400px) {
+    .panel {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .panel h2 {
+        font-size: 1.15rem;
+    }
+
+    .matrix-cell input {
+        width: 43px;
+        font-size: 0.6rem;
+        padding: 0.12rem;
+    }
+
+    .section-content {
+        padding: 0.75rem;
+    }
+
+    .latex-display-area {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    #gate-buttons button {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.45rem;
+    }
+
+    .matrix-bracket {
+        font-size: 2.8rem;
+    }
+
+    .matrix-grid {
+        gap: 0.4rem;
+    }
+
+    .bloch-sphere-canvas {
+        width: 220px;
+        height: 220px;
+    }
+}
+
+/* Small Desktops / Laptops (1000px - 1200px) */
+@media (max-width: 1200px) {
+    main {
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .panel {
+        min-width: 280px;
+    }
+
+    .matrix-cell input {
+        width: 40px;
+        font-size: 0.55rem;
+        padding: 0.1rem;
+    }
+
+    .matrix-bracket {
+        font-size: 2.5rem;
+    }
+
+    .matrix-grid {
+        gap: 0.3rem;
+    }
+
+    #gate-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    #gate-buttons button {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.4rem;
+    }
+
+    .bloch-sphere-canvas {
+        width: 200px;
+        height: 200px;
+    }
+
+    .prob-bar-bg {
+        width: 140px;
+        height: 24px;
+    }
+
+    .prob-label-left {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablets (768px - 1000px) */
+@media (max-width: 1000px) {
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    header .main-nav ul {
+        gap: 1rem;
+    }
+
+    header .main-nav a {
+        font-size: 0.85rem;
+    }
+
+    main {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #bloch-container {
+        display: flex;
+        gap: 1.5rem;
+        width: 100%;
+        min-height: min-content; /* Allow container to size to content */
+        align-items: flex-start; /* Changed from: align-items: stretch */
+        overflow: visible; /* Allow Bloch sphere tooltips/labels to show */
+    }
+
+    #bloch-spheres-stack {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        overflow-x: auto;
+    }
+
+    /* ========================= */
+    /* PROBABILITY SECTION - SCROLLABLE PARENT */
+    /* ========================= */
+
+    #probability-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-width: 0;
+        min-height: 0;
+        max-height: 100%;
+        overflow-y: auto; /* Parent scrolls */
+        overflow-x: hidden;
+        padding-right: 0.5rem;
+    }
+
+    /* Scrollbar styling for probability section */
+    #probability-section::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #probability-section::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    #probability-section::-webkit-scrollbar-thumb {
+        background: #999;
+        border-radius: 4px;
+    }
+
+    #probability-section::-webkit-scrollbar-thumb:hover {
+        background: #666;
+    }
+
+    /* All child sections - no scrolling, just content */
+    #probability-section > div {
+        flex-shrink: 0; /* Don't shrink children */
+    }
+
+    /* ========================= */
+    /* PHYSICAL IMPLEMENTATION - NO INTERNAL SCROLL */
+    /* ========================= */
+
+    /* Outer container - no overflow */
+    #physical-implementation-container {
+        flex: 0 0 auto; /* Don't grow/shrink */
+        background: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    /* Title */
+    #physical-implementation-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Content area - no scroll, just flex */
+    #physical-implementation-content {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    /* Controls section */
+    #physical-implementation-content > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 200px;
+        padding: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    /* Image container */
+    #physical-implementation-content > div:last-child {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 0.3rem;
+        min-height: 250px;
+    }
+
+    /* Image - natural sizing */
+    #physical-implementation-image {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* Responsive - stack vertically */
+    @media (max-width: 900px) {
+        #physical-implementation-content {
+            flex-direction: column;
+        }
+        
+        #physical-implementation-content > div:first-child {
+            min-width: 100%;
+            width: 100%;
+        }
+        
+        #physical-implementation-content > div:last-child {
+            width: 100%;
+            min-height: 300px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        #physical-implementation-content > div:last-child {
+            min-height: 250px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #physical-implementation-content > div:last-child {
+            min-height: 200px;
+        }
+    }
+
+    .panel h2 {
+        font-size: 1.1rem;
+    }
+
+    .section-heading {
+        font-size: 0.8rem;
+    }
+
+    #gate-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main-tab {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.25rem;
+    }
+
+    .state-tab {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.25rem;
+    }
+
+    #bloch-container {
+        flex-direction: column;
+        min-height: auto; /* Allow natural sizing */
+    }
+
+    #bloch-spheres-stack {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        overflow-x: auto; /* Horizontal scroll for Bloch spheres on tablets */
+    }
+
+
+}
+
+/* Mobile Landscape / Large Phones (600px - 768px) */
+@media (max-width: 768px) {
+    header {
+        padding: 0.75rem 1rem;
+    }
+
+    header h1 {
+        font-size: 1.1rem;
+    }
+
+    header .main-nav ul {
+        gap: 0.75rem;
+    }
+
+    header .main-nav a {
+        font-size: 0.8rem;
+    }
+
+    main {
+        padding: 0.5rem;
+        gap: 0.75rem;
+    }
+
+    .panel {
+        padding: 0.75rem;
+        min-height: auto;
+        max-height: none; /* Remove any height restrictions */
+    }
+
+    .panel h2 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    #bloch-spheres-stack {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        justify-content: flex-start;
+        align-items: flex-start;
+        overflow: visible; /* Allow Bloch sphere to render properly */
+        padding: 0;
+    }
+
+    .bloch-sphere-canvas {
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    .matrix-cell input {
+        width: 35px;
+        font-size: 0.5rem;
+        padding: 0.08rem;
+    }
+
+    .matrix-bracket {
+        font-size: 2.2rem;
+    }
+
+    .matrix-grid {
+        gap: 0.25rem;
+    }
+
+    #gate-buttons button {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.3rem;
+    }
+
+    .prob-bar-bg {
+        width: 120px;
+        height: 22px;
+    }
+
+    .prob-label-left {
+        font-size: 0.8rem;
+    }
+
+    .vector-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .vg-cell span {
+        min-width: 35px;
+    }
+
+    .vg-cell input {
+        width: 100px;
+    }
+
+    footer h3 {
+        font-size: 0.65rem;
+    }
+
+    #bloch-sphere-panel {
+        overflow-y: auto; /* Ensure scrolling on mobile */
+    }
+}
+
+/* Mobile Portrait (480px - 600px) */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    header .main-nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .main-tab {
+        font-size: 0.65rem;
+        padding: 0.35rem 0.2rem;
+        min-height: 35px;
+    }
+
+    .state-tab {
+        font-size: 0.65rem;
+        padding: 0.35rem 0.2rem;
+        min-height: 35px;
+    }
+
+    #gate-buttons {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+
+    #gate-buttons button {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .bloch-sphere-canvas {
+        width: 160px !important;
+        height: 160px !important;
+    }
+
+    #bloch-spheres-stack {
+        flex-direction: column;
+    }
+
+    #bloch-spheres-stack > div {
+        width: 100%;
+    }
+
+    .prob-bar-bg {
+        width: 100px;
+        height: 20px;
+    }
+
+    .matrix-cell input {
+        width: 30px;
+        font-size: 0.45rem;
+    }
+
+    .matrix-bracket {
+        font-size: 2rem;
+    }
+
+    .display-tab {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.6rem;
+        min-width: 70px;
+    }
+}
+
+/* Small Mobile (320px - 480px) */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 0.95rem;
+    }
+
+    .panel {
+        padding: 0.5rem;
+    }
+
+    .panel h2 {
+        font-size: 0.9rem;
+    }
+
+    .section-heading {
+        font-size: 0.7rem;
+    }
+
+    .bloch-sphere-canvas {
+        width: 140px !important;
+        height: 140px !important;
+    }
+
+    .matrix-cell input {
+        width: 25px;
+        font-size: 0.4rem;
+    }
+
+    .matrix-bracket {
+        font-size: 1.8rem;
+    }
+
+    .prob-bar-horizontal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+    }
+
+    .prob-bar-bg {
+        width: 100%;
+        height: 18px;
+    }
+
+    .apply-btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    footer h3 {
+        font-size: 0.6rem;
+    }
+
+    #bloch-spheres-stack {
+        flex-direction: column;
+        overflow-x: visible; /* Stack vertically, scroll the whole panel */
+    }
+
+    #bloch-spheres-stack > div {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Very Small Devices (< 320px) */
+@media (max-width: 320px) {
+    header h1 {
+        font-size: 0.85rem;
+    }
+
+    .bloch-sphere-canvas {
+        width: 120px !important;
+        height: 120px !important;
+    }
+
+    .matrix-container {
+        transform: scale(0.85);
+        transform-origin: center;
+    }
+}
+
+/* Landscape orientation optimization for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+    main {
+        flex-direction: row;
+        overflow-y: auto;
+    }
+
+    .panel {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+
+    #bloch-spheres-stack {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .bloch-sphere-canvas {
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .apply-btn,
+    .main-tab,
+    .state-tab,
+    .display-tab,
+    #gate-buttons button,
+    .bloch-arrow-btn {
+        min-height: 44px; /* Apple's recommended touch target */
+        min-width: 44px;
+    }
+
+    .matrix-cell input {
+        min-height: 32px;
+    }
 }
