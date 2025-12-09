@@ -1505,30 +1505,50 @@ function updateQuantumState(data) {
 }
 
 function updateStateVectorDisplay(coefficients) {
+    // Helper function to remove trailing zeros
+    const removeTrailingZeros = (num) => {
+        return num.toString().replace(/\.?0+$/, '');
+    };
+    
     // Format coefficients for display
     const formatComplex = (c) => {
-        const re = c.re.toFixed(3);
-        const im = c.im >= 0 ? `+${c.im.toFixed(3)}i` : `${c.im.toFixed(3)}i`;
-        if (Math.abs(c.re) < 1e-6) return im;
-        if (Math.abs(c.im) < 1e-6) return re;
+        // Round to 3 decimal places first
+        const reRounded = Math.round(c.re * 1000) / 1000;
+        const imRounded = Math.round(c.im * 1000) / 1000;
+        
+        // If both parts round to zero, return null to exclude this term
+        if (Math.abs(reRounded) < 1e-6 && Math.abs(imRounded) < 1e-6) {
+            return null;
+        }
+        
+        // Format the non-zero parts and remove trailing zeros
+        const re = removeTrailingZeros(reRounded.toFixed(3));
+        const imRoundedStr = removeTrailingZeros(imRounded.toFixed(3));
+        const im = imRounded >= 0 ? `+${imRoundedStr}i` : `${imRoundedStr}i`;
+        if (Math.abs(reRounded) < 1e-6) return im;
+        if (Math.abs(imRounded) < 1e-6) return re;
         return `${re}${im}`;
     };
     
     const display = document.getElementById('quantum-state-display');
     if (display) {
-        const c1 = formatComplex(coefficients[0]);
-        const c2 = formatComplex(coefficients[1]);
-        const c3 = formatComplex(coefficients[2]);
-        const c4 = formatComplex(coefficients[3]);
+        const basisStates = ['00', '01', '10', '11'];
+        const formattedTerms = [];
         
-        // Wrap complex numbers in parentheses for proper LaTeX multiplication
-        const wrapComplex = (c) => {
-            // Always wrap in parentheses to ensure proper multiplication with basis states
-            // This handles complex numbers, negative numbers, and expressions with operators
-            return `(${c})`;
-        };
+        // Format each coefficient and only include non-zero terms
+        for (let i = 0; i < coefficients.length; i++) {
+            const formatted = formatComplex(coefficients[i]);
+            if (formatted !== null) {
+                formattedTerms.push(`(${formatted})|${basisStates[i]}\\rangle`);
+            }
+        }
         
-        display.innerHTML = `$$|\\psi\\rangle = ${wrapComplex(c1)}|00\\rangle + ${wrapComplex(c2)}|01\\rangle + ${wrapComplex(c3)}|10\\rangle + ${wrapComplex(c4)}|11\\rangle$$`;
+        // Build the state vector string, joining terms with +
+        if (formattedTerms.length === 0) {
+            display.innerHTML = `$$|\\psi\\rangle = 0$$`;
+        } else {
+            display.innerHTML = `$$|\\psi\\rangle = ${formattedTerms.join(' + ')}$$`;
+        }
         
         // Trigger MathJax to re-render
         if (window.MathJax && window.MathJax.typesetPromise) {
