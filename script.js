@@ -1089,6 +1089,7 @@ async function initDecompose() {
             if (data.instructions && Array.isArray(data.instructions)) {
                 physicalInstructions.push(...data.instructions);
                 updateOperationsDisplay();
+                alert("Matrix has been decomposed and inputted into the Operations tab");
             }
 
         } catch (error) {

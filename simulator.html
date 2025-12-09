@@ -30,51 +30,29 @@
         header {
             background-color: #2c3e50;
             color: white;
-            padding: 1rem 2rem;
+            padding: 0.7rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        header .simulation-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: 500;
-            opacity: 1;
-            font-size: 1rem;
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-        }
-
-        header .header-left {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         header h1 {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 500;
             margin: 0;
             letter-spacing: 0.5px;
-            display: inline;
         }
 
-        header .logo {
-            height: 1.5rem;
-            width: auto;
-            margin-right: -0.2rem;
-        }
-
-        .title-bar {
-            display: flex;
-            align-items: center;
+        .simulation-title {
+            text-align: center;
+            padding: 0.6rem 2rem;
             background-color: #f8f9fa;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c3e50;
+            letter-spacing: 0.2px;
             border-bottom: 1px solid #e0e0e0;
-            padding: 0.3rem 2rem;
         }
 
         header .main-nav ul {
@@ -94,10 +72,7 @@
         header .main-nav a {
             color: white;
             text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem;
             transition: color 0.2s;
             background-color: transparent !important;
         }
@@ -116,101 +91,6 @@
         
         header .main-nav a {
             background-color: transparent !important;
-        }
-
-        .how-to-use-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            margin: 0;
-            transition: transform 0.3s ease-out;
-        }
-
-        .how-to-use-section.expanded {
-            transform: translateY(0);
-        }
-
-        .how-to-use-header {
-            padding: 0.2rem 2rem;
-            background-color: #2c3e50;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            user-select: none;
-            transition: background-color 0.2s;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 1001;
-        }
-
-        .how-to-use-header:hover {
-            background-color: #34495e;
-        }
-
-        .how-to-use-header h2 {
-            margin: 0;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: white;
-        }
-
-        .how-to-use-toggle {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8);
-            transition: transform 0.3s;
-            display: inline-block;
-        }
-
-        .how-to-use-toggle.collapsed {
-            transform: rotate(90deg);
-        }
-
-        .how-to-use-content {
-            padding: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            background-color: white;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .how-to-use-content.expanded {
-            max-height: 2000px;
-            padding: 1.5rem 2rem;
-            background-color: white;
-        }
-
-        .how-to-use-content h3 {
-            color: #2c3e50;
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .how-to-use-content h3:first-child {
-            margin-top: 0;
-        }
-
-        .how-to-use-content p {
-            color: #555;
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .how-to-use-content ul, .how-to-use-content ol {
-            margin-left: 1.5rem;
-            margin-bottom: 0.75rem;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        .how-to-use-content li {
-            margin-bottom: 0.25rem;
         }
 
         main {
@@ -334,37 +214,6 @@
             padding: 1rem;
         }
 
-        .visualization-header {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            position: relative;
-        }
-
-        .visualization-header::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 1px;
-            background-color: #666;
-            z-index: 0;
-        }
-
-        .visualization-header span {
-            position: relative;
-            display: inline-block;
-            background-color: #f8f9fa;
-            padding: 0 0.5rem;
-            z-index: 1;
-        }
-
         #controls-panel {
             min-width: 0;
         }
@@ -482,7 +331,7 @@ input[type="number"] {
 .main-tabs-container {
     display: flex;
     gap: 0;
-    margin: -1.5rem -1.5rem 0 -1.5rem;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
     border-bottom: 2px solid #e0e0e0;
 }
 
@@ -872,18 +721,19 @@ input[type="number"] {
 </head>
 <body>
     <header>
-        <div class="header-left">
-            <img src="assets/logo.png" alt="Logo" class="logo">
-            <h1>Box of Qubits</h1>
-        </div>
-        <div class="simulation-title">Unbloched: Simulation of the Physical Execution of Arbitrary 2 Qubit Entanglement Gates</div>
+        <h1>Box of Qubits</h1>
         <nav class="main-nav" aria-label="Main navigation">
             <ul>
-                <li><a href="#" class="nav-link">MORE</a></li>
+                <li><a href="index.html" class="nav-link">How to Use</a></li>
+                <li><a href="simulator.html" class="nav-link active" aria-current="page">Simulator</a></li>
                <!-- <li><a href="explain.html" class="nav-link">Explanations</a></li> -->
             </ul>
         </nav>
     </header>
+
+    <div class="simulation-title">
+        Unbloched: Simulation of the Physical Execution of Arbitrary 2 Qubit Entanglement Gates
+    </div>
 
     <main>
         <!-- Left Panel: Operations -->
@@ -1149,11 +999,12 @@ input[type="number"] {
 
         <!-- Center Panel: Bloch Sphere -->
         <section class="panel" id="bloch-sphere-panel">
-            <div class="visualization-header"><span>Visualization</span></div>
-            <div id="bloch-container" style="display: flex; gap: 1.5rem; width: 100%; height: 100%; align-items: stretch; overflow: hidden; margin-top: -0.5rem;">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; padding-bottom: 0.5rem; color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #3498db;">Quantum State Visualization</h2>
+
+            <div id="bloch-container" style="display: flex; gap: 1.5rem; width: 100%; height: 100%; align-items: stretch; overflow: hidden;">
 
                 <!-- Left: Quantum State & Probabilities -->
-                <div id="probability-section" style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0;">
+                <div id="probability-section" style="flex: 1; display: flex; flex-direction: column; gap: 1rem; min-width: 0;">
 
                     <!-- Quantum State Display -->
                     <div style="background: #3498db; padding: 0.2rem 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -1263,7 +1114,7 @@ input[type="number"] {
                     </div>
 
                     <!-- Physical Implementation -->
-                    <div style="background: #f8f9fa; padding: 0.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+                    <div style="flex: 1; background: #f8f9fa; padding: 0.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-height: 0;">
                         <div id="physical-implementation-title" style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.3rem; letter-spacing: 0.5px;">PHYSICAL IMPLEMENTATION</div>
                         <div style="flex: 1; display: flex; flex-direction: row; gap: 1rem; min-height: 0;">
                             <!-- Controls on the left -->
@@ -1396,67 +1247,11 @@ input[type="number"] {
 
     </main>
  
-    <div class="how-to-use-section">
-        <div class="how-to-use-header" id="how-to-use-header">
-            <span class="how-to-use-toggle collapsed" id="how-to-use-toggle">▶</span>
-            <h2>How to Use</h2>
-        </div>
-        <div class="how-to-use-content" id="how-to-use-content">
-            <h3>Initialize State</h3>
-            <ul>
-                <li><strong>Complex Vector:</strong> Enter 4 amplitudes for |00⟩, |01⟩, |10⟩, |11⟩ (e.g., "1", "0", "0", "0" for |00⟩)</li>
-                <li><strong>Full 2-Qubit:</strong> Enter α, β for Qubit 1 and γ, δ for Qubit 0</li>
-            </ul>
-            
-            <h3>Apply Gates</h3>
-            <ul>
-                <li>Select <strong>Quantum Gates</strong> tab</li>
-                <li>Click predefined gate (CNOT, CZ, iSWAP, H, X, Y, Z) or enter custom 4×4 unitary matrix</li>
-                <li>Click <strong>Decompose</strong> to see physical implementation</li>
-            </ul>
-            
-            <h3>View Results</h3>
-            <ul>
-                <li><strong>Bloch Spheres:</strong> 3D visualization of each qubit state (drag to rotate)</li>
-                <li><strong>Probabilities:</strong> Measurement probabilities |c₁|², |c₂|², |c₃|², |c₄|²</li>
-                <li><strong>Operations:</strong> Physical gate decomposition with drive parameters</li>
-            </ul>
-        </div>
-    </div>
-
     <footer>
         <h3>By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</h3>
     </footer>
 
 
     <script src="script.js" type="module"></script>
-    <script>
-        // Collapsible "How to Use" section
-        const howToUseSection = document.querySelector('.how-to-use-section');
-        const howToUseHeader = document.getElementById('how-to-use-header');
-        const howToUseContent = document.getElementById('how-to-use-content');
-        const howToUseToggle = document.getElementById('how-to-use-toggle');
-        
-        let isExpanded = false;
-        
-        howToUseHeader.addEventListener('click', function() {
-            isExpanded = !isExpanded;
-            
-            if (isExpanded) {
-                howToUseContent.classList.add('expanded');
-                howToUseToggle.classList.remove('collapsed');
-                // Wait for content to expand, then calculate height and move up
-                setTimeout(() => {
-                    const contentHeight = howToUseContent.offsetHeight;
-                    const headerHeight = howToUseHeader.offsetHeight;
-                    howToUseSection.style.transform = `translateY(-${contentHeight}px)`;
-                }, 50);
-            } else {
-                howToUseContent.classList.remove('expanded');
-                howToUseToggle.classList.add('collapsed');
-                howToUseSection.style.transform = 'translateY(0)';
-            }
-        });
-    </script>
 </body>
 </html> 
