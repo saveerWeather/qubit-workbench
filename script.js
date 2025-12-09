@@ -1087,9 +1087,15 @@ async function initDecompose() {
             
             // Append new instructions to the global list
             if (data.instructions && Array.isArray(data.instructions)) {
+                const numOperations = data.instructions.length;
                 physicalInstructions.push(...data.instructions);
                 updateOperationsDisplay();
-                alert("Matrix has been decomposed and inputted into the Operations tab");
+                
+                // Update message instead of alert
+                const messageElement = document.getElementById('decompose-message');
+                if (messageElement) {
+                    messageElement.textContent = `Matrix Decomposed and Loaded as ${numOperations} Operation${numOperations !== 1 ? 's' : ''}`;
+                }
             }
 
         } catch (error) {
