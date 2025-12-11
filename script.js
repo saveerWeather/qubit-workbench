@@ -1182,8 +1182,6 @@ function initPanelResize() {
                 // Let details panel keep its flex to fill remaining space
                 detailsPanel.style.flex = "1";
                 detailsPanel.style.width = "";
-
-                scaleBlochSpheres(newBlochWidth);
             }
         } else if (resizingSide === 'right') {
             const newDetailsWidth = startDetailsWidth - deltaX;
@@ -1199,8 +1197,6 @@ function initPanelResize() {
 
                 detailsPanel.style.flex = "none";
                 detailsPanel.style.width = `${newDetailsWidth}px`;
-
-                scaleBlochSpheres(newBlochWidth);
             }
         }
     });

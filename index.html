@@ -25,6 +25,7 @@
             flex-direction: column;
             background-color: #f5f5f5;
             overflow-x: hidden;
+            overflow-y: hidden; /* Prevent scrolling that would reveal content below */
         }
 
         header {
@@ -126,6 +127,20 @@
             z-index: 1000;
             margin: 0;
             transition: transform 0.3s ease-out;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Visual separation */
+            background-color: #f5f5f5; /* Match body background to cover gaps */
+        }
+        
+        .how-to-use-header {
+            background-color: #2c3e50;
+            position: relative;
+            z-index: 1001;
+        }
+        
+        .how-to-use-content {
+            background-color: white; /* Ensure solid background */
+            position: relative;
+            z-index: 1000;
         }
 
         .how-to-use-section.expanded {
@@ -178,9 +193,10 @@
         }
 
         .how-to-use-content.expanded {
-            max-height: 2000px;
+            max-height: calc(50vh - 60px); /* Subtract header height */
             padding: 1.5rem 2rem;
             background-color: white;
+            overflow-y: auto;
         }
 
         .how-to-use-content h3 {
@@ -220,24 +236,15 @@
             overflow: hidden;
             gap: 1rem;
             padding: 1rem;
+            padding-bottom: calc(1rem + 50px); /* Account for "How to Use" header height */
             min-height: 0;
             min-width: 0;
         }
-
-        footer {
-            width: 100%;
-            text-align: right;
-            padding-top: 3pt;
-            padding-bottom: 3pt;
-            padding-right: 10pt;
-            background-color: #2c3e50;
-            color: white;
-        }
         
-        footer h3 {
-            font-size: 0.7rem;
-            margin: 0;
+        body {
+            padding-bottom: 0; /* Ensure no extra space at bottom */
         }
+
 
         .panel {
             flex: 1;
@@ -654,223 +661,6 @@ input[type="number"] {
             }
         }
 
-        /* Mobile responsive */
-        /* Mobile-specific styles - only applies on screens <= 768px */
-        @media (max-width: 768px) {
-            /* Hide desktop layout on mobile */
-            #controls-panel {
-                display: none !important;
-            }
-
-            #bloch-sphere-panel {
-                display: none !important;
-            }
-
-            /* Mobile header adjustments */
-            header {
-                padding: 0.5rem 1rem;
-            }
-
-            header .simulation-title {
-                display: none;
-            }
-
-            header h1 {
-                font-size: 0.85rem;
-            }
-
-            header .logo {
-                height: 1.2rem;
-            }
-
-            /* Mobile tabs container */
-            .mobile-tabs-container {
-                display: flex;
-                gap: 0;
-                background-color: #f8f9fa;
-                border-bottom: 2px solid #e0e0e0;
-            }
-
-            .mobile-tab {
-                flex: 1;
-                padding: 0.6rem 0.5rem;
-                background-color: #f5f5f5;
-                color: #666;
-                border: none;
-                border-right: 1px solid #e0e0e0;
-                cursor: pointer;
-                font-size: 0.7rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                transition: all 0.15s ease;
-                text-align: center;
-            }
-
-            .mobile-tab:last-child {
-                border-right: none;
-            }
-
-            .mobile-tab:hover {
-                background-color: #e8e8e8;
-            }
-
-            .mobile-tab.active {
-                background-color: white;
-                color: #2c3e50;
-                border-bottom: 2px solid white;
-            }
-
-            /* Mobile content area */
-            .mobile-content-area {
-                flex: 1;
-                overflow-y: auto;
-                padding: 0.75rem;
-                background-color: white;
-            }
-
-            .mobile-content-panel {
-                display: none;
-            }
-
-            .mobile-content-panel.active {
-                display: block;
-            }
-
-            /* Mobile visualization - compact */
-            .mobile-viz-container {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .mobile-state-display {
-                background: #3498db;
-                padding: 0.3rem 0.5rem;
-                border-radius: 4px;
-                font-size: 0.7rem;
-                color: white;
-                text-align: center;
-            }
-
-            .mobile-bloch-container {
-                display: flex;
-                gap: 0.5rem;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            .mobile-bloch-sphere {
-                width: 120px;
-                height: 120px;
-                min-width: 120px;
-                min-height: 120px;
-            }
-
-            .mobile-probability-section {
-                display: flex;
-                flex-direction: column;
-                gap: 0.4rem;
-                margin-top: 0.5rem;
-            }
-
-            .mobile-prob-bars {
-                display: flex;
-                flex-direction: column;
-                gap: 0.3rem;
-            }
-
-            /* Mobile operations tab at bottom */
-            .mobile-operations-tab {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: #2c3e50;
-                color: white;
-                padding: 0.4rem 1rem;
-                border-top: 2px solid rgba(255, 255, 255, 0.2);
-                z-index: 999;
-                max-height: 60px;
-                overflow-y: auto;
-            }
-
-            .mobile-operations-tab h3 {
-                font-size: 0.7rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin: 0 0 0.2rem 0;
-            }
-
-            .mobile-operations-content {
-                font-size: 0.65rem;
-                line-height: 1.3;
-                opacity: 0.9;
-            }
-
-            /* Adjust main to account for operations tab */
-            main {
-                flex-direction: column;
-                padding-bottom: 70px;
-            }
-
-            /* Hide footer on mobile */
-            footer {
-                display: none;
-            }
-
-            /* Adjust how-to-use to be above operations tab */
-            .how-to-use-section {
-                bottom: 60px;
-                max-height: calc(100vh - 60px);
-            }
-
-            .how-to-use-content.expanded {
-                max-height: calc(100vh - 120px);
-                overflow-y: auto;
-            }
-
-            /* Original mobile styles */
-            .panel {
-                min-height: 300px;
-            }
-
-            .bloch-sphere-canvas {
-                min-height: 300px;
-            }
-
-            .matrix-cell input {
-                width: 32px;
-                font-size: 0.5rem;
-                padding: 0.08rem;
-            }
-
-            .matrix-bracket {
-                font-size: 2rem;
-            }
-
-            .matrix-grid {
-                gap: 0.25rem;
-            }
-
-            #matrix-error {
-                font-size: 0.75rem;
-            }
-
-            .panel h2 {
-                font-size: 1rem;
-            }
-        }
-
-        /* Hide mobile elements on desktop */
-        @media (min-width: 769px) {
-            .mobile-tabs-container,
-            .mobile-content-area,
-            .mobile-operations-tab {
-                display: none !important;
-            }
-        }
 
 /* ==== Horizontal Probability Bars Styling ==== */
 .prob-bar-horizontal {
@@ -1074,44 +864,8 @@ input[type="number"] {
         </nav>
     </header>
 
-    <!-- Mobile Tabs (only visible on mobile) -->
-    <div class="mobile-tabs-container" id="mobile-tabs-container">
-        <button class="mobile-tab active" data-mobile-target="mobile-viz-panel">Visualization</button>
-        <button class="mobile-tab" data-mobile-target="mobile-state-panel">Initialization State</button>
-        <button class="mobile-tab" data-mobile-target="mobile-gate-panel">Quantum Gate</button>
-    </div>
-
     <main>
-        <!-- Mobile Content Area (only visible on mobile) -->
-        <div class="mobile-content-area">
-            <!-- Mobile Visualization Panel -->
-            <div class="mobile-content-panel active" id="mobile-viz-panel">
-                <div class="mobile-viz-container">
-                    <div class="mobile-state-display" id="mobile-quantum-state-display">
-                        $$|\psi\rangle = c_1|00\rangle + c_2|01\rangle + c_3|10\rangle + c_4|11\rangle$$
-                    </div>
-                    <div class="mobile-bloch-container">
-                        <div class="mobile-bloch-sphere" id="mobile-bloch-0"></div>
-                        <div class="mobile-bloch-sphere" id="mobile-bloch-1"></div>
-                    </div>
-                    <div class="mobile-probability-section">
-                        <div class="mobile-prob-bars" id="mobile-prob-bars"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile State Panel -->
-            <div class="mobile-content-panel" id="mobile-state-panel">
-                <div id="mobile-state-content"></div>
-            </div>
-
-            <!-- Mobile Gate Panel -->
-            <div class="mobile-content-panel" id="mobile-gate-panel">
-                <div id="mobile-gate-content"></div>
-            </div>
-        </div>
-
-        <!-- Left Panel: Operations (hidden on mobile) -->
+        <!-- Left Panel: Operations -->
         <section class="panel" id="controls-panel">
             <div class="resize-handle" id="controls-resize"></div>
             <!-- Main Tabs -->
@@ -1623,18 +1377,11 @@ input[type="number"] {
 
     </main>
 
-    <!-- Mobile Operations Tab (only visible on mobile) -->
-    <div class="mobile-operations-tab" id="mobile-operations-tab">
-        <h3>Operations</h3>
-        <div class="mobile-operations-content" id="mobile-operations-content">
-            <!-- Operations will be populated here -->
-        </div>
-    </div>
- 
     <div class="how-to-use-section">
         <div class="how-to-use-header" id="how-to-use-header">
             <span class="how-to-use-toggle collapsed" id="how-to-use-toggle">▶</span>
             <h2>How to Use</h2>
+            <div style="margin-left: auto; font-size: 0.7rem; opacity: 0.9;">By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</div>
         </div>
         <div class="how-to-use-content" id="how-to-use-content">
             <h3>Initialize State</h3>
@@ -1659,11 +1406,6 @@ input[type="number"] {
         </div>
     </div>
 
-    <footer>
-        <h3>By Saveer Jain, Sam Critchley, Francesca Lewitton, Sienna Braun</h3>
-    </footer>
-
-
     <script src="script.js" type="module"></script>
     <script>
         // Collapsible "How to Use" section
@@ -1680,11 +1422,17 @@ input[type="number"] {
             if (isExpanded) {
                 howToUseContent.classList.add('expanded');
                 howToUseToggle.classList.remove('collapsed');
-                // Wait for content to expand, then calculate height and move up
+                // Move up by only the visible content height
+                // Limit translation to prevent revealing content below
                 setTimeout(() => {
                     const contentHeight = howToUseContent.offsetHeight;
                     const headerHeight = howToUseHeader.offsetHeight;
-                    howToUseSection.style.transform = `translateY(-${contentHeight}px)`;
+                    // Calculate total section height (header + content)
+                    const totalHeight = headerHeight + contentHeight;
+                    // Only translate by content height, but ensure we don't create a gap
+                    // The section should expand upward while staying anchored at bottom
+                    const translateAmount = Math.min(contentHeight, window.innerHeight - headerHeight - 20);
+                    howToUseSection.style.transform = `translateY(-${translateAmount}px)`;
                 }, 50);
             } else {
                 howToUseContent.classList.remove('expanded');
@@ -1693,312 +1441,6 @@ input[type="number"] {
             }
         });
 
-        // Mobile tab switching (only runs on mobile devices <= 768px)
-        function initMobileTabs() {
-            if (window.innerWidth <= 768) {
-                const mobileTabs = document.querySelectorAll('.mobile-tab');
-                const mobilePanels = document.querySelectorAll('.mobile-content-panel');
-
-                // Tab switching
-                mobileTabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        const target = this.getAttribute('data-mobile-target');
-                        
-                        // Remove active from all tabs and panels
-                        mobileTabs.forEach(t => t.classList.remove('active'));
-                        mobilePanels.forEach(p => p.classList.remove('active'));
-                        
-                        // Add active to clicked tab and target panel
-                        this.classList.add('active');
-                        const targetPanel = document.getElementById(target);
-                        if (targetPanel) {
-                            targetPanel.classList.add('active');
-                        }
-                    });
-                });
-
-                // Copy content from desktop panels to mobile panels (deep clone to preserve structure)
-                function copyContentToMobile() {
-                    const stateInfoPanel = document.getElementById('state-info-panel');
-                    const gateMatrixPanel = document.getElementById('gate-matrix-panel');
-                    const operationsList = document.getElementById('operations-list');
-
-                    // Copy state panel - use same elements, don't clone
-                    if (stateInfoPanel && document.getElementById('mobile-state-content')) {
-                        const mobileStateContent = document.getElementById('mobile-state-content');
-                        // Move the actual panel content to mobile (not clone)
-                        const stateTabs = stateInfoPanel.querySelector('#state-tabs');
-                        const stateVectorPanel = stateInfoPanel.querySelector('#state-vector');
-                        const stateFullPanel = stateInfoPanel.querySelector('#state-full');
-                        
-                        if (stateTabs && stateVectorPanel && stateFullPanel) {
-                            mobileStateContent.innerHTML = '';
-                            mobileStateContent.appendChild(stateTabs.cloneNode(true));
-                            mobileStateContent.appendChild(stateVectorPanel.cloneNode(true));
-                            mobileStateContent.appendChild(stateFullPanel.cloneNode(true));
-                            
-                            // Reattach event handlers to cloned inputs by finding them and syncing
-                            const inputIds = ['vec-00', 'vec-01', 'vec-10', 'vec-11', 'alpha', 'beta', 'gamma', 'delta'];
-                            inputIds.forEach(id => {
-                                const original = document.getElementById(id);
-                                const cloned = mobileStateContent.querySelector(`#${id}`);
-                                if (original && cloned) {
-                                    cloned.value = original.value;
-                                    
-                                    // Sync cloned -> original
-                                    cloned.addEventListener('input', function() {
-                                        original.value = this.value;
-                                        original.dispatchEvent(new Event('input', { bubbles: true }));
-                                    });
-                                    
-                                    // Sync original -> cloned
-                                    original.addEventListener('input', function() {
-                                        cloned.value = this.value;
-                                    });
-                                    
-                                    // Make cloned input visible and accessible
-                                    cloned.style.display = '';
-                                    cloned.removeAttribute('disabled');
-                                    cloned.removeAttribute('readonly');
-                                    cloned.setAttribute('data-mobile-input', 'true');
-                                }
-                            });
-                            
-                            // Make all cloned elements visible and functional
-                            mobileStateContent.querySelectorAll('input, button, select, textarea').forEach(el => {
-                                el.style.display = '';
-                                el.removeAttribute('disabled');
-                                el.removeAttribute('readonly');
-                            });
-                            
-                            // Reattach tab switching
-                            const clonedTabs = mobileStateContent.querySelectorAll('.state-tab');
-                            clonedTabs.forEach(tab => {
-                                tab.addEventListener('click', function() {
-                                    const target = this.getAttribute('data-target');
-                                    clonedTabs.forEach(t => t.classList.remove('active'));
-                                    mobileStateContent.querySelectorAll('.state-panel').forEach(p => p.classList.add('hidden'));
-                                    this.classList.add('active');
-                                    const targetPanel = mobileStateContent.querySelector(`#${target}`);
-                                    if (targetPanel) {
-                                        targetPanel.classList.remove('hidden');
-                                    }
-                                });
-                            });
-                        }
-                    }
-                    
-                    // Copy gate panel
-                    if (gateMatrixPanel && document.getElementById('mobile-gate-content')) {
-                        const mobileGateContent = document.getElementById('mobile-gate-content');
-                        mobileGateContent.innerHTML = gateMatrixPanel.innerHTML;
-                        
-                        // Reattach gate button handlers
-                        const gateButtons = mobileGateContent.querySelectorAll('[id^="gate-"]');
-                        gateButtons.forEach(btn => {
-                            const originalId = btn.id;
-                            const originalBtn = document.getElementById(originalId);
-                            if (originalBtn) {
-                                btn.addEventListener('click', () => {
-                                    originalBtn.click();
-                                });
-                            }
-                        });
-                        
-                        // Reattach matrix input handlers
-                        const matrixInputs = mobileGateContent.querySelectorAll('#custom-matrix input');
-                        const originalMatrixInputs = document.querySelectorAll('#custom-matrix input');
-                        matrixInputs.forEach((input, index) => {
-                            if (originalMatrixInputs[index]) {
-                                input.value = originalMatrixInputs[index].value;
-                                input.addEventListener('input', function() {
-                                    originalMatrixInputs[index].value = this.value;
-                                    originalMatrixInputs[index].dispatchEvent(new Event('input'));
-                                });
-                                originalMatrixInputs[index].addEventListener('input', function() {
-                                    input.value = this.value;
-                                });
-                            }
-                        });
-                    }
-                    
-                    // Copy first operation
-                    if (operationsList && operationsList.children.length > 0 && document.getElementById('mobile-operations-content')) {
-                        const firstOp = operationsList.children[0].cloneNode(true);
-                        document.getElementById('mobile-operations-content').innerHTML = '';
-                        document.getElementById('mobile-operations-content').appendChild(firstOp);
-                    }
-                }
-
-                // Initialize mobile Bloch spheres
-                function initMobileBlochSpheres() {
-                    // Create hidden sliders for mobile Bloch spheres
-                    if (!document.getElementById('mobile-cam-phi-0')) {
-                        const sliders = [
-                            {id: 'mobile-cam-phi-0', value: 112.5},
-                            {id: 'mobile-cam-theta-0', value: 75},
-                            {id: 'mobile-cam-phi-1', value: 112.5},
-                            {id: 'mobile-cam-theta-1', value: 75}
-                        ];
-                        sliders.forEach(slider => {
-                            const input = document.createElement('input');
-                            input.type = 'range';
-                            input.id = slider.id;
-                            input.min = slider.id.includes('phi') ? '0' : '0';
-                            input.max = slider.id.includes('phi') ? '360' : '180';
-                            input.value = slider.value;
-                            input.style.display = 'none';
-                            document.body.appendChild(input);
-                        });
-                    }
-                    
-                    // Initialize Bloch spheres for mobile (wait for script.js to load)
-                    const checkAndInit = setInterval(() => {
-                        if (typeof createBlochSphere === 'function') {
-                            try {
-                                createBlochSphere("mobile-bloch-0", "mobile-cam-phi-0", "mobile-cam-theta-0");
-                                createBlochSphere("mobile-bloch-1", "mobile-cam-phi-1", "mobile-cam-theta-1");
-                                clearInterval(checkAndInit);
-                            } catch(e) {
-                                // Keep trying
-                            }
-                        }
-                    }, 100);
-                    
-                    // Stop trying after 5 seconds
-                    setTimeout(() => clearInterval(checkAndInit), 5000);
-                }
-                
-                // Override update functions to also update mobile elements
-                function setupMobileUpdates() {
-                    // Override updateBlochSpheres to also update mobile
-                    const originalUpdateBloch = window.updateBlochSpheres;
-                    if (originalUpdateBloch) {
-                        window.updateBlochSpheres = function(bloch1, bloch0, qubit1State, qubit0State, isSeparable) {
-                            // Call original
-                            originalUpdateBloch(bloch1, bloch0, qubit1State, qubit0State, isSeparable);
-                            
-                            // Also update mobile Bloch spheres
-                            const mobileContainer1 = document.getElementById('mobile-bloch-1');
-                            const mobileContainer0 = document.getElementById('mobile-bloch-0');
-                            
-                            if (mobileContainer1 && mobileContainer1.updateBloch && typeof THREE !== 'undefined') {
-                                if (isSeparable && bloch1) {
-                                    const vec1 = new THREE.Vector3(bloch1[0], bloch1[2], -bloch1[1]);
-                                    mobileContainer1.updateBloch(vec1, true);
-                                } else {
-                                    mobileContainer1.updateBloch(null, false);
-                                }
-                            }
-                            
-                            if (mobileContainer0 && mobileContainer0.updateBloch && typeof THREE !== 'undefined') {
-                                if (isSeparable && bloch0) {
-                                    const vec0 = new THREE.Vector3(bloch0[0], bloch0[2], -bloch0[1]);
-                                    mobileContainer0.updateBloch(vec0, true);
-                                } else {
-                                    mobileContainer0.updateBloch(null, false);
-                                }
-                            }
-                        };
-                    }
-                    
-                    // Override updateMeasurementProbabilities to also update mobile
-                    const originalUpdateProb = window.updateMeasurementProbabilities;
-                    if (originalUpdateProb) {
-                        window.updateMeasurementProbabilities = function(probabilities) {
-                            // Call original
-                            originalUpdateProb(probabilities);
-                            
-                            // Also update mobile probability bars
-                            const mobileProbBars = document.getElementById('mobile-prob-bars');
-                            if (mobileProbBars) {
-                                const states = ['00', '01', '10', '11'];
-                                mobileProbBars.innerHTML = '';
-                                
-                                states.forEach((state, index) => {
-                                    const prob = probabilities[index];
-                                    const barDiv = document.createElement('div');
-                                    barDiv.style.display = 'flex';
-                                    barDiv.style.alignItems = 'center';
-                                    barDiv.style.gap = '0.3rem';
-                                    barDiv.style.marginBottom = '0.3rem';
-                                    
-                                    const label = document.createElement('div');
-                                    label.textContent = `|${state}⟩: ${(prob * 100).toFixed(1)}%`;
-                                    label.style.fontSize = '0.7rem';
-                                    label.style.minWidth = '60px';
-                                    
-                                    const barBg = document.createElement('div');
-                                    barBg.style.flex = '1';
-                                    barBg.style.height = '20px';
-                                    barBg.style.backgroundColor = '#e0e0e0';
-                                    barBg.style.borderRadius = '2px';
-                                    barBg.style.overflow = 'hidden';
-                                    
-                                    const barFill = document.createElement('div');
-                                    barFill.style.width = `${prob * 100}%`;
-                                    barFill.style.height = '100%';
-                                    barFill.style.backgroundColor = '#3498db';
-                                    barFill.style.transition = 'width 0.3s';
-                                    
-                                    barBg.appendChild(barFill);
-                                    barDiv.appendChild(label);
-                                    barDiv.appendChild(barBg);
-                                    mobileProbBars.appendChild(barDiv);
-                                });
-                            }
-                        };
-                    }
-                    
-                    // Override quantum state display update
-                    const originalUpdateState = window.updateQuantumStateDisplay;
-                    if (originalUpdateState) {
-                        window.updateQuantumStateDisplay = function(coefficients) {
-                            // Call original
-                            originalUpdateState(coefficients);
-                            
-                            // Also update mobile display
-                            const mobileDisplay = document.getElementById('mobile-quantum-state-display');
-                            if (mobileDisplay && typeof formatComplex === 'function') {
-                                const c1 = formatComplex(coefficients[0]);
-                                const c2 = formatComplex(coefficients[1]);
-                                const c3 = formatComplex(coefficients[2]);
-                                const c4 = formatComplex(coefficients[3]);
-                                mobileDisplay.innerHTML = `$$|\\psi\\rangle = ${c1}|00\\rangle + ${c2}|01\\rangle + ${c3}|10\\rangle + ${c4}|11\\rangle$$`;
-                                if (window.MathJax) {
-                                    MathJax.typesetPromise([mobileDisplay]).catch(() => {});
-                                }
-                            }
-                        };
-                    }
-                }
-
-                // Copy content and initialize after a delay to ensure everything is loaded
-                setTimeout(() => {
-                    copyContentToMobile();
-                    initMobileBlochSpheres();
-                    setupMobileUpdates();
-                }, 500);
-            }
-        }
-
-        // Initialize mobile tabs on load if on mobile
-        if (window.innerWidth <= 768) {
-            // Wait for script.js to load first
-            setTimeout(initMobileTabs, 1000);
-        }
-
-        // Re-initialize on resize if crossing the 768px threshold
-        let wasMobile = window.innerWidth <= 768;
-        window.addEventListener('resize', function() {
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile !== wasMobile) {
-                wasMobile = isMobile;
-                if (isMobile) {
-                    setTimeout(initMobileTabs, 100);
-                }
-            }
-        });
     </script>
 </body>
 </html> 
