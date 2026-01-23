@@ -1021,6 +1021,9 @@ async function initDecompose() {
             currentDecomposeController.abort();
         }
         currentDecomposeController = new AbortController();
+
+        const loader = document.getElementById('decompose-loader');
+
         // First, check if any expressions have errors
         let hasError = false;
         const matrix = [];
@@ -1061,6 +1064,9 @@ async function initDecompose() {
         
         // Get current state vector if available
         const state_vector = currentStateVector?.coefficients || null;
+
+        // Show loading overlay
+        if (loader) loader.style.display = 'flex';
 
         // Send to backend
         try {
@@ -1115,6 +1121,9 @@ async function initDecompose() {
             }
             console.error('Error calling decompose:', error);
             alert('Error: Failed to check matrix unitarity');
+        } finally {
+            // Hide loading overlay
+            if (loader) loader.style.display = 'none';
         }
     });
 }
