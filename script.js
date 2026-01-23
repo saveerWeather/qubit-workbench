@@ -1089,7 +1089,6 @@ async function initDecompose() {
             if (data.instructions && Array.isArray(data.instructions)) {
                 const numOperations = data.instructions.length;
                 physicalInstructions.push(...data.instructions);
-                currentOperationIndex = 0; // Reset to start of queue
                 updateOperationsDisplay();
                 updateNextOperationBar();
                 
