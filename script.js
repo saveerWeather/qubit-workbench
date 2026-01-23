@@ -1007,6 +1007,8 @@ function initStateTabs() {
 // Decompose Button
 // =====================================================
 
+let currentDecomposeController = null;
+
 async function initDecompose() {
     const decomposeBtn = document.getElementById("gate-decompose");
     const matrixContainer = document.getElementById("custom-matrix");
@@ -1014,6 +1016,11 @@ async function initDecompose() {
     if (!decomposeBtn || !matrixContainer) return;
 
     decomposeBtn.addEventListener("click", async () => {
+        // Cancel any pending decompose request
+        if (currentDecomposeController) {
+            currentDecomposeController.abort();
+        }
+        currentDecomposeController = new AbortController();
         // First, check if any expressions have errors
         let hasError = false;
         const matrix = [];
@@ -1062,13 +1069,14 @@ async function initDecompose() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     matrix,
                     rabi_frequency,
                     q0drive_freq,
                     q1drive_freq,
                     state_vector
-                })
+                }),
+                signal: currentDecomposeController.signal
             });
 
             const data = await response.json();
@@ -1100,6 +1108,11 @@ async function initDecompose() {
             }
 
         } catch (error) {
+            // Ignore abort errors (user switched matrices)
+            if (error.name === 'AbortError') {
+                console.log('Decompose request cancelled');
+                return;
+            }
             console.error('Error calling decompose:', error);
             alert('Error: Failed to check matrix unitarity');
         }
@@ -1330,9 +1343,9 @@ function updateNextOperationBar() {
         playBtn.disabled = true;
         bar.classList.add('no-ops');
     } else {
-        // Always show the first item in queue
+        // Show remaining count and next operation title
         const instr = physicalInstructions[0];
-        titleEl.textContent = `1/${physicalInstructions.length}: ${instr.title}`;
+        titleEl.textContent = `${physicalInstructions.length} remaining: ${instr.title}`;
         playBtn.disabled = false;
         bar.classList.remove('no-ops');
     }
