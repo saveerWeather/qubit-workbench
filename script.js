@@ -1089,7 +1089,9 @@ async function initDecompose() {
             if (data.instructions && Array.isArray(data.instructions)) {
                 const numOperations = data.instructions.length;
                 physicalInstructions.push(...data.instructions);
+                currentOperationIndex = 0; // Reset to start of queue
                 updateOperationsDisplay();
+                updateNextOperationBar();
                 
                 // Update message instead of alert
                 const messageElement = document.getElementById('decompose-message');
@@ -1213,6 +1215,209 @@ function initPanelResize() {
     // Removed old scaling logic - Bloch spheres now handle their own sizing
 }
 
+// =====================================================
+// Bloch Sphere Resize Handler
+// =====================================================
+
+function handleOrientationChange() {
+    setTimeout(() => {
+        // Re-render Bloch spheres with new container dimensions
+        const containers = document.querySelectorAll('.bloch-sphere-canvas');
+        containers.forEach(container => {
+            const renderer = container.querySelector('canvas');
+            if (renderer) {
+                const size = Math.min(container.offsetWidth, container.offsetHeight);
+                renderer.style.width = size + 'px';
+                renderer.style.height = size + 'px';
+            }
+        });
+    }, 100);
+}
+
+window.addEventListener('orientationchange', handleOrientationChange);
+window.addEventListener('resize', handleOrientationChange);
+
+// =====================================================
+// Mobile Tab Navigation
+// =====================================================
+
+function initMobileTabNavigation() {
+    const tabs = document.querySelectorAll('.mobile-tab');
+    const allPanels = document.querySelectorAll('main > .panel');
+
+    if (!tabs.length) return;
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.dataset.panel;
+
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            allPanels.forEach(p => {
+                p.classList.remove('mobile-active');
+                if (p.id === targetId) {
+                    p.classList.add('mobile-active');
+                }
+            });
+
+            // Trigger Bloch sphere resize when switching to visualization panel
+            if (targetId === 'bloch-sphere-panel') {
+                setTimeout(() => {
+                    resizeBlochSpheres();
+                }, 100);
+            }
+
+            // Update mobile ops display when switching to ops panel
+            if (targetId === 'mobile-ops-panel') {
+                updateMobileOperationsDisplay();
+            }
+        });
+    });
+
+    // Set initial active on mobile
+    if (window.innerWidth <= 768) {
+        const controlsPanel = document.getElementById('controls-panel');
+        if (controlsPanel) {
+            controlsPanel.classList.add('mobile-active');
+        }
+    }
+}
+
+function resizeBlochSpheres() {
+    const containers = document.querySelectorAll('.bloch-sphere-canvas');
+    containers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        if (canvas && container.offsetWidth > 0) {
+            const size = Math.min(container.offsetWidth, container.offsetHeight) || 200;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+
+            // Trigger a window resize event to make Three.js update
+            window.dispatchEvent(new Event('resize'));
+        }
+    });
+}
+
+// =====================================================
+// Mobile Operations Panel & Next Operation Bar
+// =====================================================
+
+let currentOperationIndex = 0;
+
+function initMobileOperations() {
+    // Initialize Next Operation play button
+    const playBtn = document.getElementById('next-op-play');
+    if (playBtn) {
+        playBtn.addEventListener('click', async () => {
+            if (physicalInstructions.length > 0 && currentOperationIndex < physicalInstructions.length) {
+                const instr = physicalInstructions[currentOperationIndex];
+                await executeInstruction(instr, currentOperationIndex);
+                currentOperationIndex++;
+                updateMobileOperationsDisplay();
+                updateNextOperationBar();
+            }
+        });
+    }
+}
+
+function updateNextOperationBar() {
+    const titleEl = document.getElementById('next-op-title');
+    const playBtn = document.getElementById('next-op-play');
+    const bar = document.querySelector('.next-operation-bar');
+
+    if (!titleEl || !playBtn || !bar) return;
+
+    if (physicalInstructions.length === 0) {
+        titleEl.textContent = 'No operations queued';
+        playBtn.disabled = true;
+        bar.classList.add('no-ops');
+    } else if (currentOperationIndex >= physicalInstructions.length) {
+        titleEl.textContent = 'All operations complete!';
+        playBtn.disabled = true;
+        bar.classList.add('no-ops');
+    } else {
+        const instr = physicalInstructions[currentOperationIndex];
+        titleEl.textContent = `${currentOperationIndex + 1}/${physicalInstructions.length}: ${instr.title}`;
+        playBtn.disabled = false;
+        bar.classList.remove('no-ops');
+    }
+}
+
+function updateMobileOperationsDisplay() {
+    const mobileList = document.getElementById('mobile-ops-list');
+    if (!mobileList) return;
+
+    // Clear existing content
+    mobileList.innerHTML = '';
+
+    if (physicalInstructions.length === 0) {
+        mobileList.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                <div style="font-style: italic;">No operations yet.</div>
+                <div style="font-size: 0.85rem; margin-top: 0.5rem;">Go to Input → Quantum Gates → Decompose</div>
+            </div>
+        `;
+        return;
+    }
+
+    // Create operation cards
+    physicalInstructions.forEach((instr, index) => {
+        const card = document.createElement('div');
+        card.className = 'mobile-op-card';
+
+        // Mark completed operations
+        if (index < currentOperationIndex) {
+            card.style.opacity = '0.5';
+            card.style.background = '#f0f0f0';
+        } else if (index === currentOperationIndex) {
+            card.style.borderLeft = '4px solid #3498db';
+        }
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'op-title';
+        titleDiv.textContent = `${index + 1}. ${instr.title}`;
+        if (index < currentOperationIndex) {
+            titleDiv.textContent += ' ✓';
+        }
+        card.appendChild(titleDiv);
+
+        if (index >= currentOperationIndex) {
+            const executeBtn = document.createElement('button');
+            executeBtn.className = 'op-execute';
+            executeBtn.textContent = index === currentOperationIndex ? '▶ Play' : 'Skip to';
+            executeBtn.addEventListener('click', async () => {
+                currentOperationIndex = index;
+                const instrToExecute = physicalInstructions[currentOperationIndex];
+                await executeInstruction(instrToExecute, currentOperationIndex);
+                currentOperationIndex++;
+                updateMobileOperationsDisplay();
+                updateNextOperationBar();
+            });
+            card.appendChild(executeBtn);
+        }
+
+        mobileList.appendChild(card);
+    });
+
+    // Add reset button if some operations have been executed
+    if (currentOperationIndex > 0) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = '↺ Reset Queue';
+        resetBtn.style.cssText = 'width: 100%; padding: 0.75rem; margin-top: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;';
+        resetBtn.addEventListener('click', () => {
+            currentOperationIndex = 0;
+            updateMobileOperationsDisplay();
+            updateNextOperationBar();
+        });
+        mobileList.appendChild(resetBtn);
+    }
+
+    // Also update the next operation bar
+    updateNextOperationBar();
+}
+
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize Bloch spheres
@@ -1261,13 +1466,15 @@ document.addEventListener("DOMContentLoaded", () => {
     initPanelResize();
     initApplyState();
     initMeasureButtons();
-    
+    initMobileTabNavigation();
+    initMobileOperations();
+
     // Initialize state to |00⟩ = [1, 0, 0, 0]
     initializeDefaultState();
-    
+
     // Initialize frequency displays
     initializeFrequencies();
-    
+
     // Initialize operations display
     updateOperationsDisplay();
 });
@@ -1582,14 +1789,19 @@ function updateCoefficientValues(coefficients) {
 }
 
 function updateMeasurementProbabilities(probabilities) {
-    // Update probability bars
+    // Update probability bars and percentage text
     const states = ['00', '01', '10', '11'];
-    
+
     states.forEach((state, index) => {
         const prob = probabilities[index];
         const fill = document.getElementById(`prob-${state}`);
         if (fill) {
             fill.style.width = `${prob * 100}%`;
+        }
+        // Update percentage text
+        const pctEl = document.getElementById(`prob-${state}-pct`);
+        if (pctEl) {
+            pctEl.textContent = `${(prob * 100).toFixed(1)}%`;
         }
     });
 }
@@ -1827,6 +2039,9 @@ function updateOperationsDisplay() {
         
         operationsList.appendChild(instructionDiv);
     });
+
+    // Also update mobile operations display
+    updateMobileOperationsDisplay();
 }
 
 // =====================================================

@@ -12,6 +12,19 @@
 
      <link rel="stylesheet" href="assets/css/style.css" />
     <style>
+        :root {
+            --bloch-sphere-size: 240px;
+            --coefficient-svg-size: 80px;
+            --min-touch-target: 44px;
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --bloch-sphere-size: min(280px, 85vw);
+                --coefficient-svg-size: 60px;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -362,8 +375,9 @@
         }
 
         .bloch-sphere-canvas {
-            width: 280px;
-            height: 280px;
+            width: var(--bloch-sphere-size);
+            height: var(--bloch-sphere-size);
+            max-width: 100%;
             background-color: #fafafa;
             border: 1px dashed #ddd;
             border-radius: 3px;
@@ -371,6 +385,21 @@
             align-items: center;
             justify-content: center;
             color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .bloch-sphere-canvas {
+                width: min(280px, calc(100vw - 2rem));
+                height: auto;
+                aspect-ratio: 1;
+                margin: 0 auto;
+            }
+        }
+
+        .coefficient-svg {
+            width: var(--coefficient-svg-size);
+            height: var(--coefficient-svg-size);
+            max-width: 100%;
         }
 
 /* Gate matrix UI in right panel */
@@ -648,6 +677,14 @@ input[type="number"] {
 
 
 /* ==== Horizontal Probability Bars Styling ==== */
+.prob-label-right {
+    min-width: 50px;
+    text-align: right;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
 .prob-bar-horizontal {
     display: flex;
     align-items: center;
@@ -829,6 +866,582 @@ input[type="number"] {
     width: 120px;
 }
 
+/* Mobile tab bar - hidden on desktop */
+.mobile-tab-bar {
+    display: none;
+}
+
+/* Mobile ops panel - hidden on desktop */
+#mobile-ops-panel {
+    display: none !important;
+}
+
+/* Next operation bar - hidden on desktop */
+.next-operation-bar {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    /* Hide header subtitle on mobile */
+    header {
+        flex-wrap: wrap;
+        padding: 0.5rem 1rem;
+    }
+
+    header .simulation-title {
+        display: none;
+    }
+
+    /* Bottom tab bar - app-like navigation */
+    .mobile-tab-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: #2c3e50;
+        justify-content: space-around;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .mobile-tab {
+        flex: 1;
+        padding: 0.75rem 0.5rem;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .mobile-tab.active {
+        color: white;
+        background: rgba(52, 152, 219, 0.3);
+    }
+
+    /* Main content area - account for bottom tab bar */
+    main {
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 0;
+        padding-bottom: 70px; /* Space for bottom tab bar */
+        gap: 0;
+    }
+
+    main > .panel {
+        display: none !important;
+        width: 100% !important;
+        flex: none !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+
+    main > .panel.mobile-active {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .next-operation-bar {
+        display: flex !important;
+    }
+
+    .resize-handle {
+        display: none;
+    }
+
+    /* Fixed Next Operation Bar at bottom of Viz */
+    .next-operation-bar {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 56px !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: #2c3e50 !important;
+        padding: 0.6rem 1rem !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        color: white !important;
+        border-radius: 0 !important;
+        z-index: 500 !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.2) !important;
+    }
+
+    /* Add padding to viz panel for the fixed bar */
+    #bloch-sphere-panel {
+        padding: 0.5rem !important;
+        padding-bottom: 120px !important;
+    }
+
+    .next-operation-bar.no-ops {
+        background: #7f8c8d !important;
+    }
+
+    .next-op-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .next-op-label {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        font-weight: 600;
+    }
+
+    .next-op-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .next-op-play {
+        background: #3498db !important;
+        border: none !important;
+        color: white !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 6px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        white-space: nowrap !important;
+    }
+
+    .next-op-play:disabled {
+        background: #95a5a6 !important;
+        cursor: not-allowed !important;
+    }
+
+    /* ===== Input Panel - Full Height Content ===== */
+    #controls-panel.mobile-active {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: calc(100vh - 130px) !important;
+    }
+
+    /* Main content area - fill available space */
+    #controls-panel .state-panel {
+        flex: 1 !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+
+    #controls-panel .state-panel.active {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* ===== Mobile Visualization - Full Content ===== */
+
+    #bloch-sphere-panel {
+        padding: 0.5rem !important;
+        padding-bottom: 180px !important;
+        overflow-y: auto !important;
+    }
+
+    /* Hide visualization header on mobile */
+    .visualization-header {
+        display: none !important;
+    }
+
+    /* State vector box - smaller padding */
+    #probability-section > div:first-child {
+        padding: 0.15rem 0.5rem !important;
+    }
+
+    #probability-section > div:first-child > div:first-child {
+        font-size: 0.65rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Shrink measure buttons vertically */
+    #measure-btn-0, #measure-btn-1 {
+        padding: 0.1rem 0.4rem !important;
+        font-size: 0.6rem !important;
+        margin-top: 0.1rem !important;
+        margin-left: 0 !important;
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+    /* Main bloch container - stack vertically */
+    #bloch-container {
+        flex-direction: column !important;
+        height: auto !important;
+        overflow: visible !important;
+        gap: 0.75rem !important;
+        padding: 0 !important;
+    }
+
+    /* Unwrap probability section so we can reorder its children */
+    #probability-section {
+        display: contents !important;
+    }
+
+    /* Order: 1. State Vector, 2. Bloch Spheres, 3. Physical Impl, 4. Details */
+    #probability-section > div:first-child {
+        order: 1 !important;
+        width: 100% !important;
+    }
+
+    /* Bloch spheres side by side */
+    #bloch-spheres-stack {
+        order: 2 !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Each qubit container - half width for side by side */
+    #bloch-spheres-stack > div[style] {
+        width: 48% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 0.3rem !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+    }
+
+    /* Qubit title smaller */
+    #bloch-spheres-stack > div > div:first-child {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.2rem !important;
+        text-align: center !important;
+    }
+
+    /* Bloch sphere canvas - fit container */
+    .bloch-sphere-canvas {
+        width: 100% !important;
+        max-width: 150px !important;
+        height: auto !important;
+        aspect-ratio: 1 !important;
+        margin: 0 auto !important;
+        overflow: visible !important;
+    }
+
+    /* Bloch sphere wrapper */
+    #bloch-spheres-stack > div > div:last-child > div:first-child {
+        display: block !important;
+        margin: 0 auto !important;
+        overflow: visible !important;
+        border: none !important;
+    }
+
+    /* Qubit content row - stack vertically */
+    #bloch-spheres-stack > div > div:last-child {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 0.25rem !important;
+    }
+
+    /* Bloch sphere wrapper - show and center */
+    #bloch-spheres-stack > div > div:last-child > div:first-child {
+        display: block !important;
+        margin: 0 auto !important;
+    }
+
+    /* Controls column - compact */
+    #bloch-spheres-stack > div > div:last-child > div:last-child {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 0.2rem !important;
+        width: 100% !important;
+    }
+
+    /* Hide the state equation text */
+    #bloch-spheres-stack > div > div:last-child > div:last-child > div:first-child {
+        display: none !important;
+    }
+
+    /* Alpha/beta inputs row */
+    #bloch-spheres-stack > div > div:last-child > div:last-child > div:not(:first-child):not(:last-child) {
+        display: flex !important;
+        gap: 0.2rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    #bloch-spheres-stack > div > div:last-child > div:last-child input {
+        width: 45px !important;
+        font-size: 0.65rem !important;
+        padding: 0.15rem !important;
+    }
+
+    #bloch-spheres-stack > div > div:last-child > div:last-child button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.65rem !important;
+    }
+
+    /* Physical Implementation - order 3, condensed */
+    #probability-section > div:nth-child(3) {
+        order: 3 !important;
+        width: 100% !important;
+        padding: 0.5rem !important;
+    }
+
+    /* Physical impl header */
+    #probability-section > div:nth-child(3) > div:first-child {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    /* Physical impl content row - side by side */
+    #phys-impl-content {
+        flex-direction: row !important;
+        gap: 0.3rem !important;
+        align-items: center !important;
+    }
+
+    /* Parameters column - compact vertical stack on left */
+    #phys-impl-params {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.15rem !important;
+        min-width: 80px !important;
+        max-width: 90px !important;
+        flex: 0 0 auto !important;
+        padding: 0.2rem !important;
+    }
+
+    #phys-impl-params > div {
+        gap: 0.1rem !important;
+    }
+
+    #phys-impl-params label {
+        display: none !important;
+    }
+
+    #phys-impl-params > div > div {
+        flex-direction: row !important;
+        gap: 0.1rem !important;
+    }
+
+    #phys-impl-params > div > div > div:first-child {
+        font-size: 0.6rem !important;
+    }
+
+    #phys-impl-params input {
+        font-size: 0.55rem !important;
+        padding: 0.1rem !important;
+        width: 48px !important;
+    }
+
+    /* GIF container - fills remaining space to right */
+    #phys-impl-gif {
+        flex: 1 !important;
+        max-height: 130px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+    }
+
+    #phys-impl-gif img {
+        max-width: 100% !important;
+        max-height: 130px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+    /* Coefficient & Probability section - order 4, combined grid */
+    #probability-section > div:nth-child(2) {
+        order: 4 !important;
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+        padding: 0.5rem !important;
+        background: #f8f9fa !important;
+        border-radius: 8px !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    /* Hide the individual section headers */
+    #probability-section > div:nth-child(2) > div > div:first-child {
+        display: none !important;
+    }
+
+    /* Coefficient values section */
+    #probability-section > div:nth-child(2) > div:first-child {
+        width: 100% !important;
+    }
+
+    /* Coefficient SVGs smaller in 2x2 grid */
+    .coefficient-svg {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Probability section */
+    #probability-section > div:nth-child(2) > div:last-child {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+
+    /* Compact probability bars on mobile */
+    .prob-bar-bg {
+        display: block !important;
+        width: 60px !important;
+        height: 8px !important;
+    }
+
+    /* Probability items as compact row */
+    .prob-bar-horizontal {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.2rem !important;
+        padding: 0.1rem 0 !important;
+    }
+
+    .prob-label-left {
+        min-width: 28px !important;
+        font-size: 0.6rem !important;
+        font-weight: 600 !important;
+    }
+
+    .prob-label-right {
+        display: none !important;
+    }
+
+    /* State vector display - full width */
+    #probability-section > div:first-child {
+        width: 100% !important;
+    }
+
+    /* Coefficient & Probability row - stack vertically */
+    #probability-section > div:nth-child(2) {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        padding: 0.75rem !important;
+    }
+
+    /* Coefficient values section */
+    #probability-section > div:nth-child(2) > div:first-child {
+        width: 100% !important;
+    }
+
+    /* Make coefficient SVGs smaller */
+    .coefficient-svg {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    /* Probability section */
+    #probability-section > div:nth-child(2) > div:last-child {
+        width: 100% !important;
+    }
+
+    .prob-bar-bg {
+        width: 100% !important;
+        flex: 1 !important;
+    }
+
+    .prob-bar-horizontal {
+        gap: 0.5rem;
+    }
+
+    .prob-label-left {
+        min-width: 70px;
+        font-size: 0.8rem;
+    }
+
+    /* Physical Implementation - already styled via #phys-impl-* IDs above */
+
+    /* Bloch spheres stack */
+    #bloch-spheres-stack {
+        width: 100% !important;
+        flex: none !important;
+        align-items: center !important;
+        padding: 0 !important;
+        gap: 0.5rem !important;
+        order: 2;
+    }
+
+    /* Individual qubit containers */
+    #bloch-spheres-stack > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0.5rem !important;
+        box-sizing: border-box;
+    }
+
+    /* Qubit content row */
+    #bloch-spheres-stack > div > div:last-child {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Bloch sphere canvas */
+    .bloch-sphere-canvas {
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    /* Controls beside Bloch sphere */
+    #bloch-spheres-stack > div > div:last-child > div:last-child {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        width: 100% !important;
+    }
+
+    #bloch-spheres-stack > div > div:last-child > div:last-child > div:first-child {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    #bloch-spheres-stack > div > div:last-child > div:last-child > button {
+        margin-left: 0 !important;
+    }
+
+    /* Hide footer on mobile to save space */
+    footer {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .matrix-cell input {
+        width: 36px;
+        font-size: 0.5rem;
+    }
+}
+
+@media (pointer: coarse) {
+    button, .apply-btn, .state-tab, .main-tab {
+        min-height: var(--min-touch-target);
+    }
+}
+
+@media (max-width: 768px) {
+    /* Smaller arrow buttons on mobile */
+    .bloch-arrow-btn {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 12px !important;
+        padding: 0 !important;
+    }
+}
+
 </style>
 
         
@@ -848,6 +1461,11 @@ input[type="number"] {
             </ul>
         </nav>
     </header>
+
+    <nav class="mobile-tab-bar">
+        <button class="mobile-tab active" data-panel="controls-panel">Input</button>
+        <button class="mobile-tab" data-panel="bloch-sphere-panel">Visualization</button>
+    </nav>
 
     <main>
         <!-- Left Panel: Operations -->
@@ -1147,7 +1765,7 @@ input[type="number"] {
                                 <!-- Grid -->
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; justify-items: center; align-items: center;">
                                     <!-- |00⟩ top-left -->
-                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                    <svg class="coefficient-svg" viewBox="0 0 80 80" style="border: 1px solid #ddd; background: white;">
                                         <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
                                         <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
                                         <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
@@ -1156,7 +1774,7 @@ input[type="number"] {
                                     </svg>
 
                                     <!-- |01⟩ top-right -->
-                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                    <svg class="coefficient-svg" viewBox="0 0 80 80" style="border: 1px solid #ddd; background: white;">
                                         <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
                                         <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
                                         <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
@@ -1165,7 +1783,7 @@ input[type="number"] {
                                     </svg>
 
                                     <!-- |10⟩ bottom-left -->
-                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                    <svg class="coefficient-svg" viewBox="0 0 80 80" style="border: 1px solid #ddd; background: white;">
                                         <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
                                         <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
                                         <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
@@ -1174,7 +1792,7 @@ input[type="number"] {
                                     </svg>
 
                                     <!-- |11⟩ bottom-right -->
-                                    <svg width="80" height="80" style="border: 1px solid #ddd; background: white;">
+                                    <svg class="coefficient-svg" viewBox="0 0 80 80" style="border: 1px solid #ddd; background: white;">
                                         <circle cx="40" cy="40" r="32" fill="none" stroke="#ccc" stroke-width="1"/>
                                         <line x1="8" y1="40" x2="72" y2="40" stroke="#ddd" stroke-width="1"/>
                                         <line x1="40" y1="8" x2="40" y2="72" stroke="#ddd" stroke-width="1"/>
@@ -1197,31 +1815,35 @@ input[type="number"] {
 
                             <div style="display: flex; flex-direction: column; gap: 0.6rem; justify-content: center; min-height: 160px;">
                                 <div class="prob-bar-horizontal">
-                                    <div class="prob-label-left">|00⟩: |c₁|²</div>
+                                    <div class="prob-label-left">|00⟩:</div>
                                     <div class="prob-bar-bg">
                                         <div class="prob-bar-fill" id="prob-00"></div>
                                     </div>
+                                    <div class="prob-label-right" id="prob-00-pct">0%</div>
                                 </div>
 
                                 <div class="prob-bar-horizontal">
-                                    <div class="prob-label-left">|01⟩: |c₂|²</div>
+                                    <div class="prob-label-left">|01⟩:</div>
                                     <div class="prob-bar-bg">
                                         <div class="prob-bar-fill" id="prob-01"></div>
                                     </div>
+                                    <div class="prob-label-right" id="prob-01-pct">0%</div>
                                 </div>
 
                                 <div class="prob-bar-horizontal">
-                                    <div class="prob-label-left">|10⟩: |c₃|²</div>
+                                    <div class="prob-label-left">|10⟩:</div>
                                     <div class="prob-bar-bg">
                                         <div class="prob-bar-fill" id="prob-10"></div>
                                     </div>
+                                    <div class="prob-label-right" id="prob-10-pct">0%</div>
                                 </div>
 
                                 <div class="prob-bar-horizontal">
-                                    <div class="prob-label-left">|11⟩: |c₄|²</div>
+                                    <div class="prob-label-left">|11⟩:</div>
                                     <div class="prob-bar-bg">
                                         <div class="prob-bar-fill" id="prob-11"></div>
                                     </div>
+                                    <div class="prob-label-right" id="prob-11-pct">0%</div>
                                 </div>
                             </div>
                         </div>
@@ -1231,9 +1853,9 @@ input[type="number"] {
                     <!-- Physical Implementation -->
                     <div style="background: #f8f9fa; padding: 0.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
                         <div id="physical-implementation-title" style="font-size: 0.85rem; font-weight: 600; color: #495057; margin-bottom: 0.3rem; letter-spacing: 0.5px;">PHYSICAL IMPLEMENTATION</div>
-                        <div style="flex: 1; display: flex; flex-direction: row; gap: 1rem; min-height: 0;">
+                        <div id="phys-impl-content" style="flex: 1; display: flex; flex-direction: row; gap: 1rem; min-height: 0;">
                             <!-- Controls on the left -->
-                            <div style="display: flex; flex-direction: column; gap: 0.4rem; min-width: 200px; padding: 0.5rem;">
+                            <div id="phys-impl-params" style="display: flex; flex-direction: column; gap: 0.4rem; min-width: 200px; padding: 0.5rem;">
                                 <!-- Q1 Drive Freq -->
                                 <div style="display: flex; flex-direction: column; gap: 0.15rem;">
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #495057;">Q1 Drive Freq:</label>
@@ -1263,7 +1885,7 @@ input[type="number"] {
                             </div>
                             
                             <!-- Image on the right -->
-                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px; border: 1px solid #ddd; overflow: auto; padding: 0.3rem; min-height: 0; max-height: 60vh;">
+                            <div id="phys-impl-gif" style="flex: 1; display: flex; align-items: center; justify-content: center; background: white; border-radius: 4px; border: 1px solid #ddd; overflow: auto; padding: 0.3rem; min-height: 0; max-height: 60vh;">
                                 <img id="physical-implementation-image" src="assets/animations/basic.png" alt="Physical Implementation" style="max-width: 98%; max-height: 98%; object-fit: contain; display: block;">
                             </div>
                         </div>
@@ -1281,7 +1903,7 @@ input[type="number"] {
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                             <!-- Bloch Sphere -->
                             <div style="border: 2px solid #ddd; border-radius: 4px; background: white; position: relative;">
-                                <div class="bloch-sphere-canvas" id="bloch-sphere-1" style="width: 240px; height: 240px;">
+                                <div class="bloch-sphere-canvas" id="bloch-sphere-1">
                                 </div>
                                 <!-- Arrow Controls -->
                                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
@@ -1321,7 +1943,7 @@ input[type="number"] {
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                             <!-- Bloch Sphere -->
                             <div style="border: 2px solid #ddd; border-radius: 4px; background: white; position: relative;">
-                                <div class="bloch-sphere-canvas" id="bloch-sphere-0" style="width: 240px; height: 240px;">
+                                <div class="bloch-sphere-canvas" id="bloch-sphere-0">
                                 </div>
                                 <!-- Arrow Controls -->
                                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
@@ -1356,6 +1978,15 @@ input[type="number"] {
 
                 </div>
 
+            </div>
+
+            <!-- Sticky Next Operation Bar (mobile only) -->
+            <div class="next-operation-bar">
+                <div class="next-op-info">
+                    <span class="next-op-label">Next:</span>
+                    <span class="next-op-title" id="next-op-title">No operations</span>
+                </div>
+                <button class="next-op-play" id="next-op-play" disabled>▶ Play</button>
             </div>
 
         </section>
