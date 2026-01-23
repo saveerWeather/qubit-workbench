@@ -1303,18 +1303,16 @@ function resizeBlochSpheres() {
 // Mobile Operations Panel & Next Operation Bar
 // =====================================================
 
-let currentOperationIndex = 0;
-
 function initMobileOperations() {
     // Initialize Next Operation play button
     const playBtn = document.getElementById('next-op-play');
     if (playBtn) {
         playBtn.addEventListener('click', async () => {
-            if (physicalInstructions.length > 0 && currentOperationIndex < physicalInstructions.length) {
-                const instr = physicalInstructions[currentOperationIndex];
-                await executeInstruction(instr, currentOperationIndex);
-                currentOperationIndex++;
-                updateMobileOperationsDisplay();
+            if (physicalInstructions.length > 0) {
+                // Always execute from top of queue (index 0)
+                // executeInstruction removes the item after execution
+                const instr = physicalInstructions[0];
+                await executeInstruction(instr, 0);
                 updateNextOperationBar();
             }
         });
@@ -1332,13 +1330,10 @@ function updateNextOperationBar() {
         titleEl.textContent = 'No operations queued';
         playBtn.disabled = true;
         bar.classList.add('no-ops');
-    } else if (currentOperationIndex >= physicalInstructions.length) {
-        titleEl.textContent = 'All operations complete!';
-        playBtn.disabled = true;
-        bar.classList.add('no-ops');
     } else {
-        const instr = physicalInstructions[currentOperationIndex];
-        titleEl.textContent = `${currentOperationIndex + 1}/${physicalInstructions.length}: ${instr.title}`;
+        // Always show the first item in queue
+        const instr = physicalInstructions[0];
+        titleEl.textContent = `1/${physicalInstructions.length}: ${instr.title}`;
         playBtn.disabled = false;
         bar.classList.remove('no-ops');
     }
@@ -1362,57 +1357,33 @@ function updateMobileOperationsDisplay() {
         return;
     }
 
-    // Create operation cards
+    // Create operation cards - first item is always "next"
     physicalInstructions.forEach((instr, index) => {
         const card = document.createElement('div');
         card.className = 'mobile-op-card';
 
-        // Mark completed operations
-        if (index < currentOperationIndex) {
-            card.style.opacity = '0.5';
-            card.style.background = '#f0f0f0';
-        } else if (index === currentOperationIndex) {
+        // Highlight first item as next
+        if (index === 0) {
             card.style.borderLeft = '4px solid #3498db';
         }
 
         const titleDiv = document.createElement('div');
         titleDiv.className = 'op-title';
         titleDiv.textContent = `${index + 1}. ${instr.title}`;
-        if (index < currentOperationIndex) {
-            titleDiv.textContent += ' ✓';
-        }
         card.appendChild(titleDiv);
 
-        if (index >= currentOperationIndex) {
-            const executeBtn = document.createElement('button');
-            executeBtn.className = 'op-execute';
-            executeBtn.textContent = index === currentOperationIndex ? '▶ Play' : 'Skip to';
-            executeBtn.addEventListener('click', async () => {
-                currentOperationIndex = index;
-                const instrToExecute = physicalInstructions[currentOperationIndex];
-                await executeInstruction(instrToExecute, currentOperationIndex);
-                currentOperationIndex++;
-                updateMobileOperationsDisplay();
-                updateNextOperationBar();
-            });
-            card.appendChild(executeBtn);
-        }
+        const executeBtn = document.createElement('button');
+        executeBtn.className = 'op-execute';
+        executeBtn.textContent = index === 0 ? '▶ Play' : 'Execute';
+        executeBtn.addEventListener('click', async () => {
+            // Execute this instruction (removes it from array)
+            await executeInstruction(instr, index);
+            updateNextOperationBar();
+        });
+        card.appendChild(executeBtn);
 
         mobileList.appendChild(card);
     });
-
-    // Add reset button if some operations have been executed
-    if (currentOperationIndex > 0) {
-        const resetBtn = document.createElement('button');
-        resetBtn.textContent = '↺ Reset Queue';
-        resetBtn.style.cssText = 'width: 100%; padding: 0.75rem; margin-top: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;';
-        resetBtn.addEventListener('click', () => {
-            currentOperationIndex = 0;
-            updateMobileOperationsDisplay();
-            updateNextOperationBar();
-        });
-        mobileList.appendChild(resetBtn);
-    }
 
     // Also update the next operation bar
     updateNextOperationBar();
