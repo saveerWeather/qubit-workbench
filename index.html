@@ -7,8 +7,14 @@
 
     <link rel="stylesheet" href="assets/css/style.css" />
 
-    <!-- MathJax for LaTeX rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- MathJax for LaTeX rendering. Self-hosted so content blockers and
+         restricted networks can't strip equation rendering off the page. -->
+    <script>
+        window.MathJax = {
+            chtml: { fontURL: 'assets/vendor/mathjax/output/chtml/fonts/woff-v2' }
+        };
+    </script>
+    <script src="assets/vendor/mathjax/tex-mml-chtml.js"></script>
 
      <link rel="stylesheet" href="assets/css/style.css" />
     <style>
