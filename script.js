@@ -1,6 +1,8 @@
 // Fresh start - script.js
 
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js";
+// Self-hosted: a blocked/unreachable CDN used to abort this whole module,
+// which killed every event listener on the page (tabs, gates, state init).
+import * as THREE from "./assets/vendor/three.module.js";
 
 // =====================================================
 // Bloch Sphere Rendering with Three.js
@@ -1412,9 +1414,14 @@ function updateMobileOperationsDisplay() {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialize Bloch spheres
-    createBlochSphere("bloch-sphere-0", "cam-phi-0", "cam-theta-0");
-    createBlochSphere("bloch-sphere-1", "cam-phi-1", "cam-theta-1");
+    // Initialize Bloch spheres. Isolated: if WebGL is unavailable or the 3D
+    // setup throws, the rest of the UI must still wire up.
+    try {
+        createBlochSphere("bloch-sphere-0", "cam-phi-0", "cam-theta-0");
+        createBlochSphere("bloch-sphere-1", "cam-phi-1", "cam-theta-1");
+    } catch (err) {
+        console.error("Bloch sphere rendering unavailable:", err);
+    }
 
     // Arrow controls for Bloch spheres
     document.querySelectorAll('.bloch-arrow-btn').forEach(btn => {
@@ -1450,25 +1457,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    initGateMatrix();
-    initLatexDisplay();
-    initMainTabs();
-    initStateTabs();
-    initDecompose();
-    initPanelResize();
-    initApplyState();
-    initMeasureButtons();
-    initMobileTabNavigation();
-    initMobileOperations();
-
-    // Initialize state to |00⟩ = [1, 0, 0, 0]
-    initializeDefaultState();
-
-    // Initialize frequency displays
-    initializeFrequencies();
-
-    // Initialize operations display
-    updateOperationsDisplay();
+    // Each initializer is isolated so one failure can't leave the rest of the
+    // page without event handlers.
+    [
+        initGateMatrix,
+        initLatexDisplay,
+        initMainTabs,
+        initStateTabs,
+        initDecompose,
+        initPanelResize,
+        initApplyState,
+        initMeasureButtons,
+        initMobileTabNavigation,
+        initMobileOperations,
+        initializeDefaultState,   // state to |00⟩ = [1, 0, 0, 0]
+        initializeFrequencies,
+        updateOperationsDisplay
+    ].forEach(init => {
+        try {
+            init();
+        } catch (err) {
+            console.error(`${init.name} failed:`, err);
+        }
+    });
 });
 
 // =====================================================
