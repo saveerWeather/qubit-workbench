@@ -9,29 +9,36 @@ import * as THREE from "./assets/vendor/three.module.js";
 // =====================================================
 
 // WebGL is a fingerprinting surface, so privacy browsers and hardware
-// acceleration settings routinely disable it. Detect that up front so the
-// spheres can explain themselves instead of rendering as blank boxes.
-function isWebGLAvailable() {
-    try {
-        const canvas = document.createElement("canvas");
-        return !!(window.WebGLRenderingContext &&
-            (canvas.getContext("webgl2") || canvas.getContext("webgl") ||
-             canvas.getContext("experimental-webgl")));
-    } catch (err) {
-        return false;
-    }
-}
-
-function showBlochFallback(containerId) {
+// acceleration settings routinely disable it. Rather than probe with a
+// synthetic canvas -- which can disagree with the real renderer -- we let
+// createBlochSphere attempt the real thing and only fall back if it throws.
+function showBlochFallback(containerId, err) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    container.innerHTML =
-        '<div class="bloch-fallback">' +
-        '<strong>3D view unavailable</strong>' +
-        '<span>Your browser has WebGL disabled. Enable hardware acceleration ' +
-        'or lower your browser\'s shields for this site to see the Bloch sphere. ' +
-        'Everything else on the page still works.</span>' +
-        '</div>';
+
+    const wrap = document.createElement("div");
+    wrap.className = "bloch-fallback";
+
+    const title = document.createElement("strong");
+    title.textContent = "3D view unavailable";
+
+    const body = document.createElement("span");
+    body.textContent =
+        "This browser could not create a WebGL context, which the Bloch sphere " +
+        "needs. Turning on hardware acceleration (or lowering privacy shields " +
+        "for this site) restores it. Everything else on the page still works.";
+
+    wrap.append(title, body);
+
+    // Show the underlying error so the cause is verifiable, not guessed at.
+    if (err && err.message) {
+        const detail = document.createElement("code");
+        detail.className = "bloch-fallback-detail";
+        detail.textContent = err.message.slice(0, 120);
+        wrap.append(detail);
+    }
+
+    container.replaceChildren(wrap);
 }
 
 function createBlochSphere(containerId, phiSliderId, thetaSliderId) {
@@ -1447,16 +1454,11 @@ document.addEventListener("DOMContentLoaded", () => {
         ["bloch-sphere-0", "cam-phi-0", "cam-theta-0"],
         ["bloch-sphere-1", "cam-phi-1", "cam-theta-1"]
     ].forEach(([containerId, phiId, thetaId]) => {
-        if (!isWebGLAvailable()) {
-            console.error(`Bloch sphere "${containerId}": WebGL is unavailable in this browser.`);
-            showBlochFallback(containerId);
-            return;
-        }
         try {
             createBlochSphere(containerId, phiId, thetaId);
         } catch (err) {
             console.error(`Bloch sphere "${containerId}" could not render:`, err);
-            showBlochFallback(containerId);
+            showBlochFallback(containerId, err);
         }
     });
 

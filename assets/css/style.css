@@ -180,3 +180,10 @@ main#content {
   line-height: 1.4;
   max-width: 30ch;
 }
+
+.bloch-fallback-detail {
+  font-size: 0.65rem;
+  color: #999;
+  word-break: break-word;
+  max-width: 30ch;
+}
