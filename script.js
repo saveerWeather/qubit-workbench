@@ -8,6 +8,32 @@ import * as THREE from "./assets/vendor/three.module.js";
 // Bloch Sphere Rendering with Three.js
 // =====================================================
 
+// WebGL is a fingerprinting surface, so privacy browsers and hardware
+// acceleration settings routinely disable it. Detect that up front so the
+// spheres can explain themselves instead of rendering as blank boxes.
+function isWebGLAvailable() {
+    try {
+        const canvas = document.createElement("canvas");
+        return !!(window.WebGLRenderingContext &&
+            (canvas.getContext("webgl2") || canvas.getContext("webgl") ||
+             canvas.getContext("experimental-webgl")));
+    } catch (err) {
+        return false;
+    }
+}
+
+function showBlochFallback(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML =
+        '<div class="bloch-fallback">' +
+        '<strong>3D view unavailable</strong>' +
+        '<span>Your browser has WebGL disabled. Enable hardware acceleration ' +
+        'or lower your browser\'s shields for this site to see the Bloch sphere. ' +
+        'Everything else on the page still works.</span>' +
+        '</div>';
+}
+
 function createBlochSphere(containerId, phiSliderId, thetaSliderId) {
     const container = document.getElementById(containerId);
     const phiSlider = document.getElementById(phiSliderId);
@@ -1414,14 +1440,25 @@ function updateMobileOperationsDisplay() {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialize Bloch spheres. Isolated: if WebGL is unavailable or the 3D
-    // setup throws, the rest of the UI must still wire up.
-    try {
-        createBlochSphere("bloch-sphere-0", "cam-phi-0", "cam-theta-0");
-        createBlochSphere("bloch-sphere-1", "cam-phi-1", "cam-theta-1");
-    } catch (err) {
-        console.error("Bloch sphere rendering unavailable:", err);
-    }
+    // Initialize Bloch spheres. Each is isolated so one failure can't take out
+    // the other or the rest of the UI, and a failure explains itself in place
+    // rather than leaving a silent empty box.
+    [
+        ["bloch-sphere-0", "cam-phi-0", "cam-theta-0"],
+        ["bloch-sphere-1", "cam-phi-1", "cam-theta-1"]
+    ].forEach(([containerId, phiId, thetaId]) => {
+        if (!isWebGLAvailable()) {
+            console.error(`Bloch sphere "${containerId}": WebGL is unavailable in this browser.`);
+            showBlochFallback(containerId);
+            return;
+        }
+        try {
+            createBlochSphere(containerId, phiId, thetaId);
+        } catch (err) {
+            console.error(`Bloch sphere "${containerId}" could not render:`, err);
+            showBlochFallback(containerId);
+        }
+    });
 
     // Arrow controls for Bloch spheres
     document.querySelectorAll('.bloch-arrow-btn').forEach(btn => {
